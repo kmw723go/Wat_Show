@@ -1,25 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+
+    android:id="@+id/main_drawer"
     tools:context=".MainActivity">
+
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:id="@+id/imageView"
-            android:layout_width="300dp"
-            android:layout_height="200dp"
-            app:srcCompat="@android:drawable/ic_menu_slideshow" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="MAIN SCREEN"
+            android:textSize="50sp"/>
+
+
+
+
     </LinearLayout>
-</LinearLayout>
+
+
+
+    <!-- 드로어 레이아웃 안의 내용들  반드시 네비게이션뷰의 그래비티를 정해줘야한다.-->
+    <android.support.design.widget.NavigationView
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:id="@+id/main_navi_view"
+        app:headerLayout="@layout/main_draw_user_profile"
+        app:menu="@menu/main_user_menu"
+        >
+
+
+    </android.support.design.widget.NavigationView>
+
+</android.support.v4.widget.DrawerLayout>
