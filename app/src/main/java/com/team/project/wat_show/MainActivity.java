@@ -1,4 +1,4 @@
-package com.example.minwook.wat_show;
+package com.team.project.wat_show;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

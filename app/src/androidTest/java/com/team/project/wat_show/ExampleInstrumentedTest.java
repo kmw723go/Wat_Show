@@ -1,4 +1,4 @@
-package com.example.minwook.wat_show;
+package com.team.project.wat_show;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
