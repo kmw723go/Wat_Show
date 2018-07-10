@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // 네비게이션 뷰 항목
     View navi_View;
 
+    // 서치뷰
+    MenuItem main_searchView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
 
         // 메인 드로워레이아웃 설정
         settingDrawer();
@@ -65,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.getTabAt(1).setIcon(R.drawable.video_content);
         tabLayout.getTabAt(2).setIcon(R.drawable.my_list);
 
-        // 메인 목록 선택시 반응
+        // 메인 목록 선택시 아이콘  반응
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -158,9 +162,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_setting_menu, menu);
 
+        inflater.inflate(R.menu.main_search_view, menu);
+        main_searchView = menu.findItem(R.id.search);
+
         return true;
     }
 
+    // 왼쪽 상단 메뉴바
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
