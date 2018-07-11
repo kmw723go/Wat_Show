@@ -48,8 +48,8 @@
         android:layout_gravity="left"
         android:id="@+id/main_navi_view"
         app:headerLayout="@layout/main_draw_user_profile"
-        app:menu="@menu/main_user_menu"
         >
+        <!--app:menu="@menu/main_user_menu"-->
 
 
     </android.support.design.widget.NavigationView>

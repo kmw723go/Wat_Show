@@ -1,6 +1,7 @@
 package com.team.project.wat_show;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -16,11 +17,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.team.project.wat_show.appSetting.appSetting_main;
+import com.team.project.wat_show.broadCast.broadCast_main;
+import com.team.project.wat_show.chargeUp_exchange.chargeUp_exchange_main;
 import com.team.project.wat_show.main_activity.main_viewPager_Adapter;
+import com.team.project.wat_show.userPage.userPage_main;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -28,11 +34,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public ActionBarDrawerToggle main_Toggle;
     public TabLayout tabLayout;
 
+    // 사용자 정보
+    String loginUserId;
+    String loginUserNick;
+    String loginUserCash;
+    String loginUserPrfile;
+
+
+
+
+    // 네비게이션 메뉴가 열려있는지 확인하고, ( 백버튼시 숨겨주기 위함 )
     Boolean navi_open = false;
 
     // 네비게이션 뷰 항목
     View navi_View;
-
+    NavigationView mNavigationView;
     // 서치뷰
     MenuItem main_searchView;
 
@@ -45,6 +61,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
+        // 사용자 정보 가지고 오기
+        try{
+            getUserData();
+        }catch (Exception e){
+            Toast.makeText(this, "사용자의 정보를 가지고 오지 못했습니다.", Toast.LENGTH_SHORT).show();
+        }
+
 
         // 메인 드로워레이아웃 설정
         settingDrawer();
@@ -53,8 +76,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // 뷰페이저 설정
         setViewPager();
 
-
     }
+
+    // 사용자 정보 받아오기
+    public void getUserData(){
+
+        // 아이디 받기
+        loginUserId = getIntent().getStringExtra("loginUserId");
+
+        // 아이디를 가지고, 서버에서  사용자의 닉네임과 프로필이미지, 돈가지고 오기
+    }
+
+
 
 
     // --------------------- 검색 ( 서치뷰 ) onCreateOptionsMenu 내부에서 호출 ---------------------
@@ -68,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 sv.setFocusable(true);
                 sv.setIconified(false);
                 sv.requestFocusFromTouch();
+
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
+                drawer.closeDrawer(GravityCompat.START);
                 return true;
             }
 
@@ -103,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sv.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                Toast.makeText(MainActivity.this, "닫기", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "닫기", Toast.LENGTH_SHORT).show();
 
                 // 서치뷰 닫기
                 main_searchView.collapseActionView();
@@ -183,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         main_Toggle.syncState();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // 툴바 활성화
-        NavigationView mNavigationView = (NavigationView) findViewById(R.id.main_navi_view);
+        mNavigationView = (NavigationView) findViewById(R.id.main_navi_view);
         if (mNavigationView != null) {
             mNavigationView.setNavigationItemSelectedListener(this);
         }
@@ -194,8 +230,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView main_navi_userNick = (TextView)navi_View.findViewById(R.id.main_navi_userNick);
         main_navi_userNick.setText("홍길동이");
 
-    }
 
+
+        // 유저페이지 이동 인텐트
+        gotoUserPage();
+
+        // 충전 환전 이동
+        gotoChargeUpPage();
+
+        // 방송하기 페이지로 이동
+        gotoBroadCast();
+
+
+    }
 
 
     // ----------------------------------옵션 아이템 클릭 리스너 -------------------------------
@@ -211,7 +258,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // ...  에있는 항목들.
         switch (item.getItemId()) {
             case R.id.setting:
-                Toast.makeText(this, "환경설정", Toast.LENGTH_SHORT).show();
+                Intent gotoAppSetting = new Intent(MainActivity.this,appSetting_main.class);
+                startActivity(gotoAppSetting);
                 return true;
             case R.id.logout:
                 Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
@@ -222,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     }
-    
+
     // ----------------------------- 네이게이션 메뉴가 드로워 활성화----------------------------
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -242,28 +290,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    //------------------------------- 왼쪽 상단 메뉴바 클릭 이벤트 --------------------------------------------
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+    // ------------------------------네비게이션 메뉴  클릭 이벤트 -----------------------
+    //사용자 정보창
+    public void gotoUserPage(){
+        navi_View = mNavigationView.getHeaderView(0);
 
-        int id = item.getItemId();
-
-        if (id == R.id.nav_userCash) {
-            Toast.makeText(MainActivity.this, "소지금", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_cash_ChargeUp) {
-            Toast.makeText(MainActivity.this, "충전 환전", Toast.LENGTH_SHORT).show();
-        }else if( id == R.id.nav_rec){
-            Toast.makeText(MainActivity.this, "방송하기", Toast.LENGTH_SHORT).show();
-        }
-
-        // 아이템 클릭시  네비게이션 드로워 닫기
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
-        drawer.closeDrawer(GravityCompat.START);
-        return false;
-
+        LinearLayout main_draw_profile_Layout = (LinearLayout)navi_View.findViewById(R.id.main_draw_profile_Layout);
+        main_draw_profile_Layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gotoUserPage = new Intent(MainActivity.this,userPage_main.class);
+                startActivity(gotoUserPage);
+            }
+        });
     }
 
+    // 충전 및 환전 하기
+    public void gotoChargeUpPage(){
+        //충전 환전  클릭 이벤트
+        navi_View = mNavigationView.getHeaderView(0);
+        TextView nav_cash_ChargeUp = (TextView)navi_View.findViewById(R.id.nav_cash_ChargeUp);
+        nav_cash_ChargeUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gotoExchange = new Intent(MainActivity.this,chargeUp_exchange_main.class);
+                startActivity(gotoExchange);
+/*
+                // 아이템 클릭시  네비게이션 드로워 닫기
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
+                drawer.closeDrawer(GravityCompat.START);*/
+            }
+        });
+    }
+
+    // 방송하기
+    public void gotoBroadCast(){
+        navi_View = mNavigationView.getHeaderView(0);
+        LinearLayout nav_rec = (LinearLayout) navi_View.findViewById(R.id.nav_rec);
+        nav_rec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gotoBroadCast = new Intent(MainActivity.this,broadCast_main.class);
+                startActivity(gotoBroadCast);
+
+              /*  // 아이템 클릭시  네비게이션 드로워 닫기
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
+                drawer.closeDrawer(GravityCompat.START);*/
+            }
+        });
+    }
 
     @Override
     public void onBackPressed() {
@@ -280,5 +356,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
+    }
+
+    //  원래는 메뉴를 사용해서 아이템값에따라 이벤트를 지정하나 ,  이미지가 흑백으로만 나오는 문제로 pass
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return false;
     }
 }

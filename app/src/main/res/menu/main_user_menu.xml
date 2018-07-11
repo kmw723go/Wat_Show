@@ -2,22 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-<!--
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_userCash"
-            android:title="소지금" />
-        <item
-            android:id="@+id/nav_cash_ChargeUp"
-            android:title="충전 / 환전" />
 
-    </group>-->
+    <!-- 사용 보류!!!!!-->
+    <!-- 아이콘 색상이 적용되지 않는 문제로  해더 레이아웃으로 대체함.-->
+
 
     <item android:title="Cash">
         <menu>
             <item
                 android:id="@+id/nav_userCash"
-                android:title="소지금" />
+                android:title="소지금"
+                android:icon="@drawable/video_content_selected"/>
             <item
                 android:id="@+id/nav_cash_ChargeUp"
                 android:title="충전 / 환전" />
@@ -30,7 +25,8 @@
         <menu>
             <item
                 android:id="@+id/nav_rec"
-                android:title="방송하기" />
+                android:title="방송하기"
+                />
         </menu>
     </item>
 

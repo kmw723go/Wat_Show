@@ -17,7 +17,22 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".Signup"></activity>
+        <activity android:name=".Signup" />
+
+        <!-- 유저 페이지 -->
+        <activity
+            android:name=".userPage.userPage_main"
+            android:theme="@style/nonTitleTheme" />
+        <!-- 충전 환전 페이지 -->
+        <activity
+            android:name=".chargeUp_exchange.chargeUp_exchange_main"
+            android:theme="@style/nonTitleTheme" />
+
+        <!-- 방송 페이지 -->
+        <activity
+            android:name=".broadCast.broadCast_main"
+            android:theme="@style/nonTitleTheme" />
+        <activity android:name=".appSetting.appSetting_main"></activity>
     </application>
 
 </manifest>

@@ -9,4 +9,15 @@
 
     </style>
 
+
+    <!-- 타이틀이 필요 없는 곳에서 사용하는 테마 ( 메니패스트에 적용해서 사용하시오.) -->
+    <style name="nonTitleTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#ff0000</item>
+        <item name="colorPrimaryDark">#ff0000</item>
+        <item name="colorAccent">#ffffff</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
 </resources>
