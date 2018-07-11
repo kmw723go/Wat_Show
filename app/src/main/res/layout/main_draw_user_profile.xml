@@ -22,14 +22,32 @@
             android:layout_gravity="center_horizontal"
             android:src="@drawable/default_profile_image" />
 
-        <TextView
+        <LinearLayout
             android:layout_marginTop="10dp"
-            android:id="@+id/main_navi_userNick"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="닉네임"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:orientation="horizontal"
+            android:gravity="center"
+           >
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/setting_image"
+                />
+
+            <TextView
+                android:id="@+id/main_navi_userNick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="닉네임"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        </LinearLayout>
+
+
 
 
     </LinearLayout>

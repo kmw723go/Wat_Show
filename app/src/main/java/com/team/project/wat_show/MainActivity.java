@@ -1,5 +1,7 @@
 package com.team.project.wat_show;
 
+import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -8,12 +10,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public DrawerLayout main_drawer;
     public ActionBarDrawerToggle main_Toggle;
     public TabLayout tabLayout;
+
+    Boolean navi_open = false;
 
     // 네비게이션 뷰 항목
     View navi_View;
@@ -49,11 +54,75 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setViewPager();
 
 
-
     }
 
 
-    //------------------------------ 뷰페이저 설정 ( 연동 및 아이콘 ) ----------------------------------------
+    // --------------------- 검색 ( 서치뷰 ) onCreateOptionsMenu 내부에서 호출 ---------------------
+    public void setSearchEvent(){
+
+        // 서치뷰 클릭시 자동 포커스 주기
+        main_searchView.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override // 서치뷰가 확장되었을 시
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                SearchView sv = (SearchView)main_searchView.getActionView();
+                sv.setFocusable(true);
+                sv.setIconified(false);
+                sv.requestFocusFromTouch();
+                return true;
+            }
+
+            @Override // 서치뷰가 없어졌을시.
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                return true;
+            }
+        });
+
+
+
+        // 검색어 및 검색어 입력 관련 이벤트
+        SearchView sv = (SearchView)main_searchView.getActionView();
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override // 검색 버튼을 눌렀을 시 이벤트
+            public boolean onQueryTextSubmit(String query) {
+
+                //Toast.makeText(MainActivity.this, "검색결과 : "+query, Toast.LENGTH_SHORT).show();
+                // 서치뷰 닫기
+                main_searchView.collapseActionView();
+                return true;
+            }
+
+            @Override // 글자가 쓰면서 발생하는 이벤트
+            public boolean onQueryTextChange(String newText) {
+                //Toast.makeText(MainActivity.this, "검색중 : "+newText , Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
+
+        // 서치뷰  닫기 버튼 X 모양 버튼 클릭시 이벤트
+        sv.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Toast.makeText(MainActivity.this, "닫기", Toast.LENGTH_SHORT).show();
+
+                // 서치뷰 닫기
+                main_searchView.collapseActionView();
+
+                // 키보드 내리기
+                View searchView = getCurrentFocus();
+                if(searchView != null){
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchView.getWindowToken(),0);
+                }
+                return true;
+            }
+        });
+
+
+
+    }
+
+    //------------------------------ 뷰페이저 설정 ( 연동 및 아이콘 ) ---------------------------
     public void setViewPager() {
         // 뷰페이저 어댑터 연동
         ViewPager viewPager = (ViewPager) findViewById(R.id.main_pager);
@@ -104,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-
     //------------------------------ 드로워레이아웃과 네비게이션 메뉴 클릭 --------------------
     public void settingDrawer() {
         main_drawer = (DrawerLayout) findViewById(R.id.main_drawer);
@@ -126,24 +194,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView main_navi_userNick = (TextView)navi_View.findViewById(R.id.main_navi_userNick);
         main_navi_userNick.setText("홍길동이");
 
-
     }
 
 
-    // ----------------------------- 네이게이션 메뉴가 드로워 활성화----------------------------
+
+    // ----------------------------------옵션 아이템 클릭 리스너 -------------------------------
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (main_Toggle.onOptionsItemSelected(item)) {
+            navi_open = true;
             return true;
         }
 
 
         // ...  에있는 항목들.
         switch (item.getItemId()) {
-            case R.id.home:
-                Toast.makeText(this, "home", Toast.LENGTH_SHORT).show();
-                return true;
             case R.id.setting:
                 Toast.makeText(this, "환경설정", Toast.LENGTH_SHORT).show();
                 return true;
@@ -156,44 +222,63 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     }
-
+    
+    // ----------------------------- 네이게이션 메뉴가 드로워 활성화----------------------------
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // 우측 상단 설정메뉴
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_setting_menu, menu);
 
+
+        // 우측 상단 서치뷰
         inflater.inflate(R.menu.main_search_view, menu);
         main_searchView = menu.findItem(R.id.search);
+
+        // 서치뷰 검색 이벤트
+        setSearchEvent();
+
 
         return true;
     }
 
-    // 왼쪽 상단 메뉴바
+    //------------------------------- 왼쪽 상단 메뉴바 클릭 이벤트 --------------------------------------------
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            Toast.makeText(MainActivity.this, "카메라", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_gallery) {
-            Toast.makeText(MainActivity.this, "갤러리", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_slideshow) {
-            Toast.makeText(MainActivity.this, "슬라이드쇼", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_manage) {
-            Toast.makeText(MainActivity.this, "툴", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_share) {
-            Toast.makeText(MainActivity.this, "공유", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_send) {
-            Toast.makeText(MainActivity.this, "보내기", Toast.LENGTH_SHORT).show();
+        if (id == R.id.nav_userCash) {
+            Toast.makeText(MainActivity.this, "소지금", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_cash_ChargeUp) {
+            Toast.makeText(MainActivity.this, "충전 환전", Toast.LENGTH_SHORT).show();
+        }else if( id == R.id.nav_rec){
+            Toast.makeText(MainActivity.this, "방송하기", Toast.LENGTH_SHORT).show();
         }
 
-
+        // 아이템 클릭시  네비게이션 드로워 닫기
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
         drawer.closeDrawer(GravityCompat.START);
-
         return false;
 
     }
 
+
+    @Override
+    public void onBackPressed() {
+
+        //네비게이션 뷰가 열려 있다면. true를 반환하여 네비게이션 뷰만 닫아준다.
+        if(navi_open == true){
+            // 아이템 클릭시  네비게이션 드로워 닫기
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
+            drawer.closeDrawer(GravityCompat.START);
+            navi_open = false;
+        }else{
+            super.onBackPressed();
+        }
+
+
+
+    }
 }
