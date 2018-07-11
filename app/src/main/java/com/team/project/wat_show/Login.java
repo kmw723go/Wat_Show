@@ -28,6 +28,7 @@ public class Login extends AppCompatActivity implements
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
+        findViewById(R.id.login).setOnClickListener(this);
     }
     @Override
     public void onStart() {
@@ -75,12 +76,21 @@ public class Login extends AppCompatActivity implements
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    private void login() {
+        Intent signInIntent = new Intent(Login.this,MainActivity.class);
+        startActivity(signInIntent);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
                 signIn();
                 break;
+            case R.id.login:
+                login();
+                break;
+
         }
     }
 }
