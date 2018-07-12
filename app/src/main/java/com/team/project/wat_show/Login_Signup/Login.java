@@ -1,4 +1,4 @@
-package com.team.project.wat_show;
+package com.team.project.wat_show.Login_Signup;
 
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -12,6 +12,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.team.project.wat_show.MainActivity;
+import com.team.project.wat_show.R;
 
 public class Login extends AppCompatActivity implements
         View.OnClickListener{
@@ -29,6 +31,7 @@ public class Login extends AppCompatActivity implements
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.login).setOnClickListener(this);
+        findViewById(R.id.Signup).setOnClickListener(this);
     }
     @Override
     public void onStart() {
@@ -81,6 +84,11 @@ public class Login extends AppCompatActivity implements
         startActivity(signInIntent);
     }
 
+    private void Signup() {
+        Intent signInIntent = new Intent(Login.this,Signup.class);
+        startActivity(signInIntent);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -89,6 +97,9 @@ public class Login extends AppCompatActivity implements
                 break;
             case R.id.login:
                 login();
+                break;
+            case R.id.Signup:
+                Signup();
                 break;
 
         }
