@@ -267,7 +267,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent gotoAppSetting = new Intent(MainActivity.this,appSetting_main.class);
                 startActivity(gotoAppSetting);
                 return true;
-
             case R.id.logout:
                 Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
                 return true;
