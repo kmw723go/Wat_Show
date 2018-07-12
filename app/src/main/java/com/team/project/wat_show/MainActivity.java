@@ -11,36 +11,46 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.team.project.wat_show.Login_Signup.Login;
+import com.team.project.wat_show.Login_Signup.Signup;
 import com.team.project.wat_show.appSetting.appSetting_main;
 import com.team.project.wat_show.broadCast.broadCast_main;
 import com.team.project.wat_show.chargeUp_exchange.chargeUp_exchange_main;
 import com.team.project.wat_show.main_activity.main_viewPager_Adapter;
+import com.team.project.wat_show.serviceCenter.serviceCenter_main;
 import com.team.project.wat_show.userPage.userPage_main;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    // 7월 12일 오후 3시 44분  합본
+
 
     public DrawerLayout main_drawer;
     public ActionBarDrawerToggle main_Toggle;
     public TabLayout tabLayout;
 
     // 사용자 정보
-    String loginUserId;
+    String loginUserId = "";
     String loginUserNick;
     String loginUserCash;
     String loginUserPrfile;
 
-
+    // 로그인 상태
+    Boolean loginOn = false;
 
 
     // 네비게이션 메뉴가 열려있는지 확인하고, ( 백버튼시 숨겨주기 위함 )
@@ -61,10 +71,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
+
         // 사용자 정보 가지고 오기
-        try{
+        try {
             getUserData();
-        }catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(this, "사용자의 정보를 가지고 오지 못했습니다.", Toast.LENGTH_SHORT).show();
         }
 
@@ -79,25 +90,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // 사용자 정보 받아오기
-    public void getUserData(){
+    public void getUserData() {
 
         // 아이디 받기
-        loginUserId = getIntent().getStringExtra("loginUserId");
-
+        // loginUserId = getIntent().getStringExtra("loginUserId");
         // 아이디를 가지고, 서버에서  사용자의 닉네임과 프로필이미지, 돈가지고 오기
     }
 
+    // 로그인 체크 (레이아웃을 숨기거나 보여줌 )
+    public void loginCheck() {
+        if (loginUserId.equals("") || loginUserId == null || TextUtils.isEmpty(loginUserId)) {
+            loginOn = false;
+            navi_View = mNavigationView.getHeaderView(0);
 
+            // 사용자 정보 숨기기
+            LinearLayout main_draw_profile_Layout = (LinearLayout) navi_View.findViewById(R.id.main_draw_profile_Layout);
+            main_draw_profile_Layout.setVisibility(View.GONE);
+
+
+            // 로그인 회원가입창 띄우기
+            LinearLayout main_draw_Login_Layout = (LinearLayout) navi_View.findViewById(R.id.main_draw_Login_Layout);
+            main_draw_Login_Layout.setVisibility(View.VISIBLE);
+
+
+        } else {
+            loginOn = true;
+            // 사용자 정보 띄우기
+            LinearLayout main_draw_profile_Layout = (LinearLayout) navi_View.findViewById(R.id.main_draw_profile_Layout);
+            main_draw_profile_Layout.setVisibility(View.VISIBLE);
+
+
+            // 로그인 회원가입창 가리기
+            LinearLayout main_draw_Login_Layout = (LinearLayout) navi_View.findViewById(R.id.main_draw_Login_Layout);
+            main_draw_Login_Layout.setVisibility(View.GONE);
+        }
+    }
 
 
     // --------------------- 검색 ( 서치뷰 ) onCreateOptionsMenu 내부에서 호출 ---------------------
-    public void setSearchEvent(){
+    public void setSearchEvent() {
 
         // 서치뷰 클릭시 자동 포커스 주기
         main_searchView.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override // 서치뷰가 확장되었을 시
             public boolean onMenuItemActionExpand(MenuItem item) {
-                SearchView sv = (SearchView)main_searchView.getActionView();
+                SearchView sv = (SearchView) main_searchView.getActionView();
                 sv.setFocusable(true);
                 sv.setIconified(false);
                 sv.requestFocusFromTouch();
@@ -114,9 +151,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
-
         // 검색어 및 검색어 입력 관련 이벤트
-        SearchView sv = (SearchView)main_searchView.getActionView();
+        SearchView sv = (SearchView) main_searchView.getActionView();
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override // 검색 버튼을 눌렀을 시 이벤트
             public boolean onQueryTextSubmit(String query) {
@@ -126,9 +162,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 main_searchView.collapseActionView();
                 View searchView = getCurrentFocus();
 
-                if(searchView != null){
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(searchView.getWindowToken(),0);
+                if (searchView != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
                 }
                 return true;
             }
@@ -152,14 +188,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 // 키보드 내리기
                 View searchView = getCurrentFocus();
-                if(searchView != null){
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(searchView.getWindowToken(),0);
+                if (searchView != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
                 }
                 return true;
             }
         });
-
 
 
     }
@@ -186,15 +221,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onTabSelected(TabLayout.Tab tab) {
                 int a = tab.getPosition();
 
-                if(a == 0){ // 생방송
+                if (a == 0) { // 생방송
                     tabLayout.getTabAt(0).setIcon(R.drawable.live_selected);
                     tabLayout.getTabAt(1).setIcon(R.drawable.video_content);
                     tabLayout.getTabAt(2).setIcon(R.drawable.my_list);
-                }else if (a == 1){ // 동영상 목록
+                } else if (a == 1) { // 동영상 목록
                     tabLayout.getTabAt(1).setIcon(R.drawable.video_content_selected);
                     tabLayout.getTabAt(0).setIcon(R.drawable.live);
                     tabLayout.getTabAt(2).setIcon(R.drawable.my_list);
-                }else if (a == 2){ // 즐겨찾기 목록
+                } else if (a == 2) { // 즐겨찾기 목록
                     tabLayout.getTabAt(2).setIcon(R.drawable.my_list_selected);
                     tabLayout.getTabAt(0).setIcon(R.drawable.live);
                     tabLayout.getTabAt(1).setIcon(R.drawable.video_content);
@@ -233,9 +268,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // 헤더 뷰에 있는 위젯 값 설정하기
         navi_View = mNavigationView.getHeaderView(0);
-        TextView main_navi_userNick = (TextView)navi_View.findViewById(R.id.main_navi_userNick);
+        TextView main_navi_userNick = (TextView) navi_View.findViewById(R.id.main_navi_userNick);
         main_navi_userNick.setText("홍길동이");
-
 
 
         // 유저페이지 이동 인텐트
@@ -246,6 +280,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // 방송하기 페이지로 이동
         gotoBroadCast();
+
+        // 로그인 이동
+        gotoLoginPage();
+
+        // 회원가입으로 이동
+        gotoJoinPage();
 
 
     }
@@ -264,12 +304,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // ...  에있는 항목들.
         switch (item.getItemId()) {
             case R.id.setting:
-                Intent gotoAppSetting = new Intent(MainActivity.this,appSetting_main.class);
+                Intent gotoAppSetting = new Intent(MainActivity.this, appSetting_main.class);
                 startActivity(gotoAppSetting);
                 return true;
 
             case R.id.serviceCenter:
-                Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
+                Intent gotoServiceCenter = new Intent(MainActivity.this, serviceCenter_main.class);
+                startActivity(gotoServiceCenter);
                 return true;
 
             case R.id.logout:
@@ -297,35 +338,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // 서치뷰 검색 이벤트
         setSearchEvent();
 
+        // 로그인 상태 받아오기
+        loginCheck();
 
         return true;
     }
 
-
     // ------------------------------네비게이션 메뉴  클릭 이벤트 -----------------------
     //사용자 정보창
-    public void gotoUserPage(){
+    public void gotoUserPage() {
         navi_View = mNavigationView.getHeaderView(0);
 
-        LinearLayout main_draw_profile_Layout = (LinearLayout)navi_View.findViewById(R.id.main_draw_profile_Layout);
+        LinearLayout main_draw_profile_Layout = (LinearLayout) navi_View.findViewById(R.id.main_draw_profile_Layout);
         main_draw_profile_Layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent gotoUserPage = new Intent(MainActivity.this,userPage_main.class);
+                Intent gotoUserPage = new Intent(MainActivity.this, userPage_main.class);
                 startActivity(gotoUserPage);
             }
         });
     }
 
     // 충전 및 환전 하기
-    public void gotoChargeUpPage(){
+    public void gotoChargeUpPage() {
         //충전 환전  클릭 이벤트
         navi_View = mNavigationView.getHeaderView(0);
-        TextView nav_cash_ChargeUp = (TextView)navi_View.findViewById(R.id.nav_cash_ChargeUp);
+        TextView nav_cash_ChargeUp = (TextView) navi_View.findViewById(R.id.nav_cash_ChargeUp);
         nav_cash_ChargeUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent gotoExchange = new Intent(MainActivity.this,chargeUp_exchange_main.class);
+                Intent gotoExchange = new Intent(MainActivity.this, chargeUp_exchange_main.class);
                 startActivity(gotoExchange);
 /*
                 // 아이템 클릭시  네비게이션 드로워 닫기
@@ -336,13 +378,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // 방송하기
-    public void gotoBroadCast(){
+    public void gotoBroadCast() {
         navi_View = mNavigationView.getHeaderView(0);
         LinearLayout nav_rec = (LinearLayout) navi_View.findViewById(R.id.nav_rec);
         nav_rec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent gotoBroadCast = new Intent(MainActivity.this,broadCast_main.class);
+                Intent gotoBroadCast = new Intent(MainActivity.this, broadCast_main.class);
                 startActivity(gotoBroadCast);
 
               /*  // 아이템 클릭시  네비게이션 드로워 닫기
@@ -352,19 +394,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    // 로그인으로 이동하기
+    public void gotoLoginPage() {
+        navi_View = mNavigationView.getHeaderView(0);
+        TextView goLoginBtn = (TextView) navi_View.findViewById(R.id.goLoginBtn);
+        goLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gotoLogin = new Intent(MainActivity.this, Login.class);
+                startActivity(gotoLogin);
+            }
+        });
+    }
+
+    // 회원가입으로 이동하기
+    public void gotoJoinPage() {
+        navi_View = mNavigationView.getHeaderView(0);
+        TextView goSignupBtn = (TextView) navi_View.findViewById(R.id.goSignupBtn);
+        goSignupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gotoJoinPage = new Intent(MainActivity.this, Signup.class);
+                startActivity(gotoJoinPage);
+            }
+        });
+    }
+
     @Override
     public void onBackPressed() {
 
         //네비게이션 뷰가 열려 있다면. true를 반환하여 네비게이션 뷰만 닫아준다.
-        if(navi_open == true){
+        if (navi_open == true) {
             // 아이템 클릭시  네비게이션 드로워 닫기
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
             drawer.closeDrawer(GravityCompat.START);
             navi_open = false;
-        }else{
+        } else {
             super.onBackPressed();
         }
-
 
 
     }
