@@ -124,6 +124,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //Toast.makeText(MainActivity.this, "검색결과 : "+query, Toast.LENGTH_SHORT).show();
                 // 서치뷰 닫기
                 main_searchView.collapseActionView();
+                View searchView = getCurrentFocus();
+
+                if(searchView != null){
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchView.getWindowToken(),0);
+                }
                 return true;
             }
 
@@ -261,6 +267,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent gotoAppSetting = new Intent(MainActivity.this,appSetting_main.class);
                 startActivity(gotoAppSetting);
                 return true;
+
+            case R.id.serviceCenter:
+                Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
+                return true;
+
             case R.id.logout:
                 Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
                 return true;
