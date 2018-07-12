@@ -34,9 +34,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public ActionBarDrawerToggle main_Toggle;
     public TabLayout tabLayout;
 
-
-    // 테스트 시간 3시 35분
-
     // 사용자 정보
     String loginUserId;
     String loginUserNick;
