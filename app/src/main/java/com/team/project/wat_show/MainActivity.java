@@ -26,9 +26,15 @@ import com.team.project.wat_show.appSetting.appSetting_main;
 import com.team.project.wat_show.broadCast.broadCast_main;
 import com.team.project.wat_show.chargeUp_exchange.chargeUp_exchange_main;
 import com.team.project.wat_show.main_activity.main_viewPager_Adapter;
+import com.team.project.wat_show.serviceCenter.serviceCenter_main;
 import com.team.project.wat_show.userPage.userPage_main;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    // 7월 12일 오후 3시 44분  합본
+
+
 
     public DrawerLayout main_drawer;
     public ActionBarDrawerToggle main_Toggle;
@@ -269,7 +275,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
 
             case R.id.serviceCenter:
-                Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
+                Intent gotoServiceCenter = new Intent(MainActivity.this,serviceCenter_main.class);
+                startActivity(gotoServiceCenter);
                 return true;
 
             case R.id.logout:
