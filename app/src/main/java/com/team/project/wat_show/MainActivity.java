@@ -2,6 +2,7 @@ package com.team.project.wat_show;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -12,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +26,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.Resource;
 import com.team.project.wat_show.Login_Signup.Login;
 import com.team.project.wat_show.Login_Signup.Signup;
 import com.team.project.wat_show.appSetting.appSetting_main;
@@ -33,11 +36,17 @@ import com.team.project.wat_show.main_activity.main_viewPager_Adapter;
 import com.team.project.wat_show.serviceCenter.serviceCenter_main;
 import com.team.project.wat_show.userPage.userPage_main;
 
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
     Integer loginReCode = 1111;
-
 
 
     public DrawerLayout main_drawer;
@@ -449,20 +458,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } catch (Exception e) {
                     Toast.makeText(this, "사용자의 정보를 가지고 오지 못했습니다.", Toast.LENGTH_SHORT).show();
                 }
-
             }
-
         }else{
-
         }
-
-
     }
 
     // --------------------------- 서버 연결 -----------------------------------------------------
 
     //사용자 정보 받아오기
     public void getUserDataOnHttp(String loginUserId){
+        class getDataFromHttp extends AsyncTask<Void,Void,String>{
+
+            OkHttpClient client = new OkHttpClient();
+
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                String serverUrl = "http://52.15.203.52/userData/getUserData.php";
+                String result="";
+              try {
+                  // 요청
+                  Request request = new Request.Builder().url(serverUrl).build();
+
+                  // 응답
+                  Response response = client.newCall(request).execute();
+
+                  Log.d("okHttp: 테스트 ",""+response.body().string());
+
+                  result = response.body().string();
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String a) {
+                super.onPostExecute(a);
+
+                Log.d("값",a);
+            }
+        }  // 클래스 끝
+
+        // Url. 연결
+        new getDataFromHttp().execute();
 
     }
 }
