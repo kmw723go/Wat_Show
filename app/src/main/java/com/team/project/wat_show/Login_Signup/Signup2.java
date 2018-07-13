@@ -40,6 +40,8 @@ import java.util.regex.Pattern;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -62,6 +64,10 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
     private static final int FROM_ALBUM = 1;
     private static final int CROP_FROM_CAMERA = 3;
     File copyFile;
+    //콜백메소드에서 중복검사인지 회원가입결과인지 확인
+    String check;
+    //닉네임 중복 검사 버튼 클릭 확인
+    Boolean nickcheck = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,15 +111,36 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                 makeDialog();
                 break;
             case R.id.SignupSubmit:
-                JSONObject jsonObject2 = new JSONObject();
-                try {
-                    jsonObject2.put("profile",copyFile);
-                    jsonObject2.put("email",SignupEmailInput.getText().toString());
-                    jsonObject2.put("nick",SignupNickInput.getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                Boolean allcheck = true;
+                if(!Pattern.matches("^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$", SignupEmailInput.getText().toString())){
+                    SignupEmailCheck.setText("형식에 맞춰 작성하세요");
+                    SignupEmailCheck.setTextColor(RED);
+                    SignupEmailCheck.setVisibility(View.VISIBLE);
+                    SignupEmailInput.requestFocus();
+                    allcheck = false;
                 }
-                sendData(2,jsonObject2);
+                if(!Pattern.matches("^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]{3,10}+$", SignupNickInput.getText().toString())){
+                    SignupNickCheck.setText("형식에 맞춰 작성하세요");
+                    SignupNickCheck.setTextColor(RED);
+                    SignupNickCheck.setVisibility(View.VISIBLE);
+                    SignupNickInput.requestFocus();
+                    allcheck = false;
+                }
+                if(nickcheck == false){
+                    allcheck = false;
+                }
+                if(allcheck == true){
+                    JSONObject jsonObject2 = new JSONObject();
+                    try {
+                        jsonObject2.put("profile",copyFile);
+                        jsonObject2.put("email",SignupEmailInput.getText().toString());
+                        jsonObject2.put("nick",SignupNickInput.getText().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    sendData(2,jsonObject2);
+                }
+
                 break;
 
         }
@@ -481,7 +508,7 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String value = SignupNickInput.getText().toString();
-                if(!Pattern.matches("^[a-zA-Z0-9]{5,15}+$", value)){
+                if(!Pattern.matches("^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]{3,10}+$", value)){
                     SignupNickCheck.setText("형식에 맞춰 작성하세요");
                     SignupNickCheck.setTextColor(RED);
                     SignupNickCheck.setVisibility(View.VISIBLE);
@@ -514,7 +541,7 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String value = SignupEmailInput.getText().toString();
-                if(!Pattern.matches("^[a-zA-Z0-9]+@[a-zA-Z0-9]+$", value)){
+                if(!Pattern.matches("^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$", value)){
                     SignupEmailCheck.setText("형식에 맞춰 작성하세요");
                     SignupEmailCheck.setTextColor(RED);
                     SignupEmailCheck.setVisibility(View.VISIBLE);
@@ -549,12 +576,78 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
     //http통신의 결과값 수신
     private final Callback callback = new Callback() {
         @Override
-        public void onFailure(Call call, IOException e) {
+        public void onFailure(final Call call, final IOException e) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // 현재 UI 스레드가 아니기 때문에 메시지 큐에 Runnable을 등록 함
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            // 메시지 큐에 저장될 메시지의 내용
+                            Log.e("qweqwe", call+"//"+e.toString());
+                        }
+                    });
+
+                }
+            }).start();
         }
         @Override
         public void onResponse(Call call, Response response) throws IOException {
-            String body = response.body().string();
+            final String body = response.body().string();
+            if (check.equals("1")) {
+                if (body.equals("1")) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 현재 UI 스레드가 아니기 때문에 메시지 큐에 Runnable을 등록 함
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    // 메시지 큐에 저장될 메시지의 내용
+                                    Toast.makeText(Signup2.this, "이미 사용중인 닉네임입니다", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
+                    }).start();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 현재 UI 스레드가 아니기 때문에 메시지 큐에 Runnable을 등록 함
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    // 메시지 큐에 저장될 메시지의 내용
+                                    Toast.makeText(Signup2.this, "사용가능한 닉네임입니다", Toast.LENGTH_SHORT).show();
+                                    nickcheck = true;
+                                }
+                            });
+
+                        }
+                    }).start();
+                }
+            }else{
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 현재 UI 스레드가 아니기 때문에 메시지 큐에 Runnable을 등록 함
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                // 메시지 큐에 저장될 메시지의 내용
+                                if(body.equals("0")){
+                                    Toast.makeText(Signup2.this, "회원가입에 성공하였습니다", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Log.e("RESULT","에러 발생! ERRCODE = " + body);
+                                    Toast.makeText(Signup2.this, "등록중 에러가 발생했습니다", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        });
+
+                    }
+                }).start();
+            }
         }
+
     };
     //okhttp를 통한 서버통신
     public class HttpConnection {
@@ -569,37 +662,42 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
         public void requestWebServer(int i,JSONObject json, Callback callback) {
             if(i == 1){
                 String nick = null;
+                check = "1";
                 try {
                     nick = (String) json.get("nick");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 RequestBody body = new FormBody.Builder()
+                        .add("check","nick")
                         .add("nick", nick)
                         .build();
                 Request request = new Request.Builder()
-                        .url("http://mydomain.com/sendData")
+                        .url("http://52.15.203.52/Login_Signup/Id_Nick_Check.php")
                         .post(body)
                         .build();
                 client.newCall(request).enqueue(callback);
             }else{
-                String profile = null,email = null,nick = null;
+                File profile = null;
+                String email = null,nick = null;
+                check = "2";
                 try {
                    nick = (String) json.get("nick");
-                   profile = (String) json.get("profile");
+                   profile = (File) json.get("profile");
                    email = (String) json.get("email");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                RequestBody body = new FormBody.Builder()
-                        .add("id", id)
-                        .add("pw", pw)
-                        .add("nick", nick)
-                        .add("email", email)
-                        .add("profile", profile)
+                MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpg");
+                RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("id", id)
+                        .addFormDataPart("pw", pw)
+                        .addFormDataPart("nick", nick)
+                        .addFormDataPart("email", email)
+                        .addFormDataPart("file", String.valueOf(imgUri),RequestBody.create(MEDIA_TYPE_JPG, profile))
                         .build();
                 Request request = new Request.Builder()
-                        .url("http://mydomain.com/sendData")
+                        .url("http://52.15.203.52/Login_Signup/Signup.php")
                         .post(body)
                         .build();
                 client.newCall(request).enqueue(callback);

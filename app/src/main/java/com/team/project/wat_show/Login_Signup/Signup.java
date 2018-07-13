@@ -35,7 +35,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener{
     TextView SignupIdCheck,SignupPWCheck,SignupConfCheck;
     EditText SignupIdInput,SignupPWInput,SignupConfInput;
     private HttpConnection httpConn = new HttpConnection();
-
+    Boolean idcheck = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,6 +177,32 @@ public class Signup extends AppCompatActivity implements View.OnClickListener{
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             String body = response.body().string();
+            if(body.equals("1")){
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        // 현재 UI 스레드가 아니기 때문에 메시지 큐에 Runnable을 등록 함
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                // 메시지 큐에 저장될 메시지의 내용
+                                Toast.makeText(Signup.this, "이미 사용중인 아이디입니다", Toast.LENGTH_SHORT).show();
+                            } });
+
+                    }
+                }).start();
+            }else{
+                new Thread(new Runnable() {
+                    @Override public void run() {
+                        // 현재 UI 스레드가 아니기 때문에 메시지 큐에 Runnable을 등록 함
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                // 메시지 큐에 저장될 메시지의 내용
+                                Toast.makeText(Signup.this, "사용가능한 아이디입니다", Toast.LENGTH_SHORT).show();
+                                idcheck = true;
+                            } });
+
+                    }
+                }).start();
+            }
         }
     };
 
@@ -220,11 +246,16 @@ public class Signup extends AppCompatActivity implements View.OnClickListener{
             SignupConfInput.requestFocus();
             check = false;
         }
+        if(idcheck == false){
+            Toast.makeText(this, "아이디 중복체크를 확인하세요", Toast.LENGTH_SHORT).show();
+            check = false;
+        }
         if(check == true){
             Intent intent = new Intent(Signup.this,Signup2.class);
             intent.putExtra("id",SignupIdInput.getText().toString());
-            intent.putExtra("PW",SignupPWInput.getText().toString());
+            intent.putExtra("pw",SignupPWInput.getText().toString());
             startActivity(intent);
+            finish();
         }
 
     }
@@ -254,10 +285,11 @@ public class Signup extends AppCompatActivity implements View.OnClickListener{
         /** 웹 서버로 요청을 한다. */
         public void requestWebServer(String parameter, Callback callback) {
             RequestBody body = new FormBody.Builder()
+                    .add("check","id")
                     .add("id", parameter)
                     .build();
             Request request = new Request.Builder()
-                    .url("http://mydomain.com/sendData")
+                    .url("http://52.15.203.52/Login_Signup/Id_Nick_Check.php")
                     .post(body)
                     .build();
             client.newCall(request).enqueue(callback);
