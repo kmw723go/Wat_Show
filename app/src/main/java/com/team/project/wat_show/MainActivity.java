@@ -260,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         main_navi_userNick.setText("홍길동이");
 
 
+
         // 유저페이지 이동 인텐트
         gotoUserPage();
 
