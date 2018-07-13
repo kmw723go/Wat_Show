@@ -174,6 +174,7 @@ public class Login extends AppCompatActivity implements
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             String body = response.body().string();
+            Log.e("qweqwe",body);
             if(body.equals("1")){
                 Intent loginInIntent = new Intent(Login.this,MainActivity.class);
                 loginInIntent.putExtra("loginUserId",id.getText().toString());

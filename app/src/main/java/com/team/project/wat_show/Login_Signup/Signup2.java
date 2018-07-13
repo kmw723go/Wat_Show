@@ -132,7 +132,6 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                 if(allcheck == true){
                     JSONObject jsonObject2 = new JSONObject();
                     try {
-                        jsonObject2.put("profile",copyFile);
                         jsonObject2.put("email",SignupEmailInput.getText().toString());
                         jsonObject2.put("nick",SignupNickInput.getText().toString());
                     } catch (JSONException e) {
@@ -329,7 +328,7 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
     public File createImageFile() throws IOException{
 
         String imgFileName = System.currentTimeMillis() + ".jpg";
-        File imageFile= null;
+        copyFile= null;
         File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures", "ireh");
 
         if(!storageDir.exists()){
@@ -337,9 +336,9 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
             storageDir.mkdirs();
         }
         Log.v("알림","storageDir 존재함 " + storageDir.toString());
-        imageFile = new File(storageDir,imgFileName);
-        mCurrentPhotoPath = imageFile.getAbsolutePath();
-        return imageFile;
+        copyFile = new File(storageDir,imgFileName);
+        mCurrentPhotoPath = copyFile.getAbsolutePath();
+        return copyFile;
     }
 
     //카메라 선택 클릭
@@ -619,6 +618,7 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                                     // 메시지 큐에 저장될 메시지의 내용
                                     Toast.makeText(Signup2.this, "사용가능한 닉네임입니다", Toast.LENGTH_SHORT).show();
                                     nickcheck = true;
+                                    Log.e("qwe",body);
                                 }
                             });
 
@@ -678,23 +678,21 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                         .build();
                 client.newCall(request).enqueue(callback);
             }else{
-                File profile = null;
                 String email = null,nick = null;
                 check = "2";
                 try {
                    nick = (String) json.get("nick");
-                   profile = (File) json.get("profile");
                    email = (String) json.get("email");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpg");
+                MediaType MEDIA_TYPE_JPG = MediaType.parse("image/*");
                 RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                         .addFormDataPart("id", id)
                         .addFormDataPart("pw", pw)
                         .addFormDataPart("nick", nick)
                         .addFormDataPart("email", email)
-                        .addFormDataPart("file", String.valueOf(imgUri),RequestBody.create(MEDIA_TYPE_JPG, profile))
+                        .addFormDataPart("file", String.valueOf(imgUri),RequestBody.create(MEDIA_TYPE_JPG, copyFile))
                         .build();
                 Request request = new Request.Builder()
                         .url("http://52.15.203.52/Login_Signup/Signup.php")
