@@ -38,9 +38,11 @@ import com.team.project.wat_show.userPage.userPage_main;
 
 import java.io.IOException;
 
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -471,6 +473,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             OkHttpClient client = new OkHttpClient();
 
+            String loginUserId;
+
+            public getDataFromHttp(String loginUserId) {
+                this.loginUserId = loginUserId;
+            }
 
             @Override
             protected void onPreExecute() {
@@ -482,15 +489,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String serverUrl = "http://52.15.203.52/userData/getUserData.php";
                 String result="";
               try {
-                  // 요청
-                  Request request = new Request.Builder().url(serverUrl).build();
 
-                  // 응답
+
+                  // 보낼 데이터 담기
+                  RequestBody sendDatas = new FormBody.Builder()
+                          .add("loginUserId",loginUserId)
+                          .build();
+
+                  // 요청하면서  데이터 보내기
+                  Request request = new Request.Builder()
+                          .url(serverUrl)
+                          .post(sendDatas)
+                          .build();
+
+                  // 응답  (response.body().string() 는  1회만 사용이 가능하다 )
                   Response response = client.newCall(request).execute();
+                  Log.d("가지고온 정보!",response.body().string());
 
-                  Log.d("okHttp: 테스트 ",""+response.body().string());
-
-                  result = response.body().string();
+                  // 가지고 온 데이터
+                 // result = response.body().string();
 
 
                 } catch (IOException e) {
@@ -505,12 +522,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected void onPostExecute(String a) {
                 super.onPostExecute(a);
 
-                Log.d("값",a);
+                Log.d("회원 정보 가지고옴 ",""+a);
+
             }
         }  // 클래스 끝
 
         // Url. 연결
-        new getDataFromHttp().execute();
+        new getDataFromHttp(loginUserId).execute();
 
     }
 }

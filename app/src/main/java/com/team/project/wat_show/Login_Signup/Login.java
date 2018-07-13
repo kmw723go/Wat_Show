@@ -179,6 +179,7 @@ public class Login extends AppCompatActivity implements
                 Intent loginInIntent = new Intent(Login.this,MainActivity.class);
                 loginInIntent.putExtra("loginUserId",id.getText().toString());
                 setResult(loginReCode,loginInIntent);
+                finish();
             }else{
                 new Thread(new Runnable() {
                     @Override public void run() {
