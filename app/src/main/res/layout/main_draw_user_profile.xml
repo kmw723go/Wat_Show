@@ -59,6 +59,7 @@
         android:visibility="gone">
 
         <TextView
+            android:id="@+id/goLoginBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#f44141"
@@ -68,6 +69,7 @@
             android:textSize="20dp" />
 
         <TextView
+            android:id="@+id/goSignupBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
