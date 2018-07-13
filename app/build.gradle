@@ -27,16 +27,21 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     api 'com.google.android.gms:play-services-auth:15.0.1'
+
     //구글 로그인 api
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
+
     // REST API
     implementation 'com.google.api-client:google-api-client:1.22.0'
     implementation 'com.google.api-client:google-api-client-android:1.22.0'
     implementation 'com.google.apis:google-api-services-people:v1-rev139-1.22.0'
+
     //Glide api
     implementation 'com.github.bumptech.glide:glide:4.0.0'
+
     //okhttp api 사용하기 위함
     implementation 'com.squareup.okhttp3:okhttp:3.8.1'
+
     // 네비게이션 드로워를 사용하기 위함.
     implementation 'com.android.support:design:27.1.1'
 

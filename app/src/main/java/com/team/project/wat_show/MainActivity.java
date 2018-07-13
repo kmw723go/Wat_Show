@@ -36,7 +36,8 @@ import com.team.project.wat_show.userPage.userPage_main;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    // 7월 12일 오후 3시 44분  합본
+    Integer loginReCode = 1111;
+
 
 
     public DrawerLayout main_drawer;
@@ -72,12 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
 
-        // 사용자 정보 가지고 오기
-        try {
-            getUserData();
-        } catch (Exception e) {
-            Toast.makeText(this, "사용자의 정보를 가지고 오지 못했습니다.", Toast.LENGTH_SHORT).show();
-        }
+
 
 
         // 메인 드로워레이아웃 설정
@@ -87,14 +83,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // 뷰페이저 설정
         setViewPager();
 
-    }
-
-    // 사용자 정보 받아오기
-    public void getUserData() {
-
-        // 아이디 받기
-        // loginUserId = getIntent().getStringExtra("loginUserId");
-        // 아이디를 가지고, 서버에서  사용자의 닉네임과 프로필이미지, 돈가지고 오기
     }
 
     // 로그인 체크 (레이아웃을 숨기거나 보여줌 )
@@ -402,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 Intent gotoLogin = new Intent(MainActivity.this, Login.class);
-                startActivity(gotoLogin);
+                startActivityForResult(gotoLogin,loginReCode);
             }
         });
     }
@@ -416,6 +404,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
                 Intent gotoJoinPage = new Intent(MainActivity.this, Signup.class);
                 startActivity(gotoJoinPage);
+                finish();
             }
         });
     }
@@ -440,5 +429,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return false;
+    }
+
+
+    // 인텐트 결과
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        // 로그인
+        if(requestCode == loginReCode){
+
+            if(resultCode == loginReCode){
+                loginUserId = data.getStringExtra("loginUserId");
+
+                // 사용자 정보 가지고 오기
+                try {
+                    getUserDataOnHttp(loginUserId);
+                } catch (Exception e) {
+                    Toast.makeText(this, "사용자의 정보를 가지고 오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+        }else{
+
+        }
+
+
+    }
+
+    // --------------------------- 서버 연결 -----------------------------------------------------
+
+    //사용자 정보 받아오기
+    public void getUserDataOnHttp(String loginUserId){
+
     }
 }
