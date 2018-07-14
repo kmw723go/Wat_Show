@@ -147,8 +147,8 @@ public class Login extends AppCompatActivity implements
         public void requestWebServer(String parameter, String parameter2, Callback callback) {
             String encoId =null,encoPw=null;
             try {
-                encoId = URLEncoder.encode(parameter,"EUC-KR");
-                encoPw = URLEncoder.encode(parameter2,"EUC-KR");
+                encoId = URLEncoder.encode(parameter,"UTF-8");
+                encoPw = URLEncoder.encode(parameter2,"UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }

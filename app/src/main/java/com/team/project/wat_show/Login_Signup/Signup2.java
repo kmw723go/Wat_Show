@@ -595,11 +595,11 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                 }
                 String encoId = null,encoPw = null,encoNick = null,encoEmail = null,encoProfile = null;
                 try {
-                     encoId = URLEncoder.encode(id,"EUC-KR");
-                     encoPw = URLEncoder.encode(pw,"EUC-KR");
-                     encoNick = URLEncoder.encode(nick,"EUC-KR");
-                     encoEmail = URLEncoder.encode(email,"EUC-KR");
-                     encoProfile = URLEncoder.encode(String.valueOf(copyFile),"EUC-KR");
+                     encoId = URLEncoder.encode(id,"UTF-8");
+                     encoPw = URLEncoder.encode(pw,"UTF-8");
+                     encoNick = URLEncoder.encode(nick,"UTF-8");
+                     encoEmail = URLEncoder.encode(email,"UTF-8");
+                     encoProfile = URLEncoder.encode(String.valueOf(copyFile),"UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
