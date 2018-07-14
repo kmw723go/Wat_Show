@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.team.project.wat_show.R;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.regex.Pattern;
 
 import okhttp3.Call;
@@ -284,12 +286,18 @@ public class Signup extends AppCompatActivity implements View.OnClickListener{
 
         /** 웹 서버로 요청을 한다. */
         public void requestWebServer(String parameter, Callback callback) {
+            String encoId =null;
+            try {
+                encoId = URLEncoder.encode(parameter,"EUC-KR");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             RequestBody body = new FormBody.Builder()
                     .add("check","id")
-                    .add("id", parameter)
+                    .add("id", encoId)
                     .build();
             Request request = new Request.Builder()
-                    .url("http://52.15.203.52/Login_Signup/Id_Nick_Check.php")
+                    .url("http://54.180.2.34/Login_Signup/Id_Nick_Check.php")
                     .post(body)
                     .build();
             client.newCall(request).enqueue(callback);

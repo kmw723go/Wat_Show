@@ -20,6 +20,8 @@ import com.team.project.wat_show.MainActivity;
 import com.team.project.wat_show.R;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -143,12 +145,19 @@ public class Login extends AppCompatActivity implements
 
         /** 웹 서버로 요청을 한다. */
         public void requestWebServer(String parameter, String parameter2, Callback callback) {
+            String encoId =null,encoPw=null;
+            try {
+                encoId = URLEncoder.encode(parameter,"EUC-KR");
+                encoPw = URLEncoder.encode(parameter2,"EUC-KR");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             RequestBody body = new FormBody.Builder()
                     .add("id", parameter)
                     .add("pw",parameter2)
                     .build();
             Request request = new Request.Builder()
-                    .url("http://52.15.203.52/Login_Signup/Login.php")
+                    .url("http://54.180.2.34/Login_Signup/Login.php")
                     .post(body)
                     .build();
             client.newCall(request).enqueue(callback);
