@@ -21,11 +21,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.Resource;
 import com.team.project.wat_show.Login_Signup.Login;
 import com.team.project.wat_show.Login_Signup.Signup;
@@ -51,6 +53,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Integer loginReCode = 1111;
 
 
+    //ip 주소
+    ip ip = new ip();
+    String ipad = ip.getIp();
+
+
     public DrawerLayout main_drawer;
     public ActionBarDrawerToggle main_Toggle;
     public TabLayout tabLayout;
@@ -71,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // 네비게이션 뷰 항목
     View navi_View;
     NavigationView mNavigationView;
+
     // 서치뷰
     MenuItem main_searchView;
 
@@ -84,12 +92,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
 
-
-
-
         // 메인 드로워레이아웃 설정
         settingDrawer();
-
 
         // 뷰페이저 설정
         setViewPager();
@@ -110,6 +114,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // 로그인 회원가입창 띄우기
             LinearLayout main_draw_Login_Layout = (LinearLayout) navi_View.findViewById(R.id.main_draw_Login_Layout);
             main_draw_Login_Layout.setVisibility(View.VISIBLE);
+
+            // 소지금 0원으로 만들기
+            TextView nav_userCash_text = (TextView)navi_View.findViewById(R.id.nav_userCash_text);
+            nav_userCash_text.setText("0 원");
+
 
 
         } else {
@@ -314,7 +323,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
 
             case R.id.logout:
-                Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
+                if(loginOn == false){
+                    Toast.makeText(this, "로그인 상태가 아닙니다.", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -362,30 +375,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // 충전 및 환전 하기
     public void gotoChargeUpPage() {
         //충전 환전  클릭 이벤트
-        navi_View = mNavigationView.getHeaderView(0);
-        TextView nav_cash_ChargeUp = (TextView) navi_View.findViewById(R.id.nav_cash_ChargeUp);
-        nav_cash_ChargeUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent gotoExchange = new Intent(MainActivity.this, chargeUp_exchange_main.class);
-                startActivity(gotoExchange);
+
+
+            navi_View = mNavigationView.getHeaderView(0);
+            TextView nav_cash_ChargeUp = (TextView) navi_View.findViewById(R.id.nav_cash_ChargeUp);
+            nav_cash_ChargeUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if(loginOn == true){
+                        Intent gotoExchange = new Intent(MainActivity.this, chargeUp_exchange_main.class);
+                        startActivity(gotoExchange);
+                    }else{
+                        Toast.makeText(MainActivity.this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                    }
 /*
                 // 아이템 클릭시  네비게이션 드로워 닫기
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
                 drawer.closeDrawer(GravityCompat.START);*/
-            }
-        });
+                }
+            });
+
+
+
+
     }
 
     // 방송하기
     public void gotoBroadCast() {
+
         navi_View = mNavigationView.getHeaderView(0);
         LinearLayout nav_rec = (LinearLayout) navi_View.findViewById(R.id.nav_rec);
         nav_rec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent gotoBroadCast = new Intent(MainActivity.this, broadCast_main.class);
-                startActivity(gotoBroadCast);
+
+                if(loginOn == true){
+                    Intent gotoBroadCast = new Intent(MainActivity.this, broadCast_main.class);
+                    startActivity(gotoBroadCast);
+                }else{
+                    Toast.makeText(MainActivity.this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                }
 
               /*  // 아이템 클릭시  네비게이션 드로워 닫기
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
@@ -437,11 +467,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    //  원래는 메뉴를 사용해서 아이템값에따라 이벤트를 지정하나 ,  이미지가 흑백으로만 나오는 문제로 pass
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
-    }
 
 
     // 인텐트 결과
@@ -453,15 +478,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if(resultCode == loginReCode){
                 loginUserId = data.getStringExtra("loginUserId");
-
                 // 사용자 정보 가지고 오기
                 try {
+                    loginOn = true;
+                    // 로그인 체크 엑티비티 변경
+                    loginCheck();
                     getUserDataOnHttp(loginUserId);
                 } catch (Exception e) {
                     Toast.makeText(this, "사용자의 정보를 가지고 오지 못했습니다.", Toast.LENGTH_SHORT).show();
                 }
+            }else{
+
             }
         }else{
+            Toast.makeText(this, "로그인에 실패 했습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -486,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             protected String doInBackground(Void... voids) {
-                String serverUrl = "http://52.15.203.52/userData/getUserData.php";
+                String serverUrl = "http://54.180.2.34/userData/getUserData.php";
                 String result="";
               try {
 
@@ -504,10 +534,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                   // 응답  (response.body().string() 는  1회만 사용이 가능하다 )
                   Response response = client.newCall(request).execute();
-                  Log.d("가지고온 정보!",response.body().string());
 
                   // 가지고 온 데이터
-                 // result = response.body().string();
+                  result = response.body().string();
 
 
                 } catch (IOException e) {
@@ -523,6 +552,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 super.onPostExecute(a);
 
                 Log.d("회원 정보 가지고옴 ",""+a);
+                devideData(a);
 
             }
         }  // 클래스 끝
@@ -531,4 +561,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         new getDataFromHttp(loginUserId).execute();
 
     }
+
+    // 사용자 정보 프로필에 뿌려주기
+    public void setUserProfile(String loginUserNick,String loginUserPrfile,String loginUserCash){
+        navi_View = mNavigationView.getHeaderView(0);
+
+        // 닉설정
+        TextView main_navi_userNick = (TextView)navi_View.findViewById(R.id.main_navi_userNick);
+        main_navi_userNick.setText(loginUserNick);
+
+        // 캐쉬설정
+        TextView nav_userCash_text = (TextView)navi_View.findViewById(R.id.nav_userCash_text);
+        nav_userCash_text.setText(loginUserCash+"원");
+
+        // 프로필 설정
+        ImageView main_navi_userProfile = (ImageView)navi_View.findViewById(R.id.main_navi_userProfile);
+        Glide.with(this).load(ipad+"/"+loginUserPrfile).into(main_navi_userProfile);
+
+    }
+
+    // 들어온 데이터 쪼개기
+    public void devideData(String result){
+        // ( 유저 닉네임 ,  이메일 , 프로필,  캐쉬를 받는다.)
+        String [] d1 = result.split("@@@@");
+
+        // 프로필 뿌려주기
+        setUserProfile(d1[0],d1[2],d1[3]);
+       /* Log.d("데이터 길이 ",""+d1.length);
+        Log.d("유저아이디",""+loginUserId);
+        Log.d("유저닉네임",""+d1[0]);
+        Log.d("유저이메일",""+d1[1]);
+        Log.d("유저프로필",""+d1[2]);
+        Log.d("유저캐쉬",""+d1[3]);*/
+
+    }
+
+
+
+    //  원래는 메뉴를 사용해서 아이템값에따라 이벤트를 지정하나 ,  이미지가 흑백으로만 나오는 문제로 pass
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return false;
+    }
+
 }

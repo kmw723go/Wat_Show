@@ -15,7 +15,7 @@
         android:visibility="visible">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageView"
+            android:id="@+id/main_navi_userProfile"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
@@ -117,6 +117,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:id="@+id/nav_userCash_text"
                 android:text="10,000 원"
                 android:textSize="15sp"
                 android:textStyle="bold" />

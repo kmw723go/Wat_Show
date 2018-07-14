@@ -148,7 +148,7 @@ public class Login extends AppCompatActivity implements
                     .add("pw",parameter2)
                     .build();
             Request request = new Request.Builder()
-                    .url("http://52.15.203.52/Login_Signup/Login.php")
+                    .url("http://54.180.2.34/Login_Signup/Login.php")
                     .post(body)
                     .build();
             client.newCall(request).enqueue(callback);
