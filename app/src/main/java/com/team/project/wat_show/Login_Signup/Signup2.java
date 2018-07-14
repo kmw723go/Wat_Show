@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.team.project.wat_show.MainActivity;
 import com.team.project.wat_show.R;
 
 import org.json.JSONException;
@@ -35,6 +36,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.regex.Pattern;
 
 import okhttp3.Call;
@@ -159,113 +162,34 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
             case FROM_ALBUM : {
                 //앨범에서 가져오기
                 if(data.getData()!=null){
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                            Signup2.this);
+                    imgUri = data.getData();
+                    Intent intent = new Intent("com.android.camera.action.CROP");
+                    intent.setDataAndType(imgUri, "image/*");
 
-                    // 제목셋팅
-
-                    // AlertDialog 셋팅
-                    alertDialogBuilder
-                            .setMessage("이미지 크롭을 하시겠습니까?")
-                            .setCancelable(false)
-                            .setPositiveButton("네",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(
-                                                DialogInterface dialog, int id) {
-                                            photoURI = data.getData();
-                                            Intent intent = new Intent("com.android.camera.action.CROP");
-                                            intent.setDataAndType(photoURI, "image/*");
-
-                                            intent.putExtra("outputX", 250);
-                                            intent.putExtra("outputY", 250);
-                                            intent.putExtra("aspectX", 1);
-                                            intent.putExtra("aspectY", 1);
-                                            intent.putExtra("scale", true);
-                                            intent.putExtra("return-data", true);
-                                            startActivityForResult(intent, CROP_FROM_CAMERA);
-
-
-                                        }
-                                    })
-                            .setNegativeButton("아니오",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(
-                                                DialogInterface dialog, int id) {
-                                            try{
-                                                copyFile = null;
-                                                copyFile = createImageFile();
-                                                photoURI = data.getData();
-                                                albumURI = Uri.fromFile(copyFile);
-                                                galleryAddPic();
-                                                //이미지뷰에 이미지 셋팅
-                                                Glide.with(Signup2.this).load(photoURI).apply(new RequestOptions().circleCrop()).into(SignupProfile);
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                                Log.v("알림","앨범에서 가져오기 에러");
-                                            }
-                                        }
-                                    });
-
-                    // 다이얼로그 생성
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-
-                    // 다이얼로그 보여주기
-                    alertDialog.show();
+                    intent.putExtra("outputX", 250);
+                    intent.putExtra("outputY", 250);
+                    intent.putExtra("aspectX", 1);
+                    intent.putExtra("aspectY", 1);
+                    intent.putExtra("scale", true);
+                    intent.putExtra("return-data", true);
+                    startActivityForResult(intent, CROP_FROM_CAMERA);
 
                 }
                 break;
             }
             case FROM_CAMERA : {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                        Signup2.this);
 
-                // 제목셋팅
+                imgUri = data.getData();
+                Intent intent = new Intent("com.android.camera.action.CROP");
+                intent.setDataAndType(imgUri, "image/*");
+                intent.putExtra("outputX", 250);
+                intent.putExtra("outputY", 250);
+                intent.putExtra("aspectX", 1);
+                intent.putExtra("aspectY", 1);
+                intent.putExtra("scale", true);
+                intent.putExtra("return-data", true);
+                startActivityForResult(intent, CROP_FROM_CAMERA);
 
-                // AlertDialog 셋팅
-                alertDialogBuilder
-                        .setMessage("이미지 크롭을 하시겠습니까?")
-                        .setCancelable(false)
-                        .setPositiveButton("네",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(
-                                            DialogInterface dialog, int id) {
-
-                                        Intent intent = new Intent("com.android.camera.action.CROP");
-                                        intent.setDataAndType(imgUri, "image/*");
-                                        intent.putExtra("outputX", 250);
-                                        intent.putExtra("outputY", 250);
-                                        intent.putExtra("aspectX", 1);
-                                        intent.putExtra("aspectY", 1);
-                                        intent.putExtra("scale", true);
-                                        intent.putExtra("return-data", true);
-                                        startActivityForResult(intent, CROP_FROM_CAMERA);
-
-
-                                    }
-                                })
-                        .setNegativeButton("아니오",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(
-                                            DialogInterface dialog, int id) {
-                                        //촬영
-                                        try{
-                                            copyFile = null;
-                                            copyFile = createImageFile();
-                                            Log.v("알림", "FROM_CAMERA 처리");
-                                            galleryAddPic();
-                                            //이미지뷰에 이미지셋팅.
-                                            Glide.with(Signup2.this).load(imgUri).apply(new RequestOptions().circleCrop()).into(SignupProfile);
-                                        }catch (Exception e){
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
-
-                // 다이얼로그 생성
-                AlertDialog alertDialog = alertDialogBuilder.create();
-
-                // 다이얼로그 보여주기
-                alertDialog.show();
 
                 break;
             }
@@ -324,22 +248,6 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
         }catch (Exception e){e.printStackTrace();}
     }
 
-    //파일 생성 메소드
-    public File createImageFile() throws IOException{
-
-        String imgFileName = System.currentTimeMillis() + ".jpg";
-        copyFile= null;
-        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures", "ireh");
-
-        if(!storageDir.exists()){
-            Log.v("알림","storageDir 존재 x " + storageDir.toString());
-            storageDir.mkdirs();
-        }
-        Log.v("알림","storageDir 존재함 " + storageDir.toString());
-        copyFile = new File(storageDir,imgFileName);
-        mCurrentPhotoPath = copyFile.getAbsolutePath();
-        return copyFile;
-    }
 
     //카메라 선택 클릭
     public void takePhoto(){
@@ -439,15 +347,6 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
 
     }
 
-    //이미지 스캔
-    public void galleryAddPic(){
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        copyFile = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(copyFile);
-        mediaScanIntent.setData(contentUri);
-        sendBroadcast(mediaScanIntent);
-        Log.e("qwe",copyFile.toString());
-    }
 
     //퍼미션 수락 다이얼로그
     private void checkPermission(){
@@ -635,6 +534,10 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                                 // 메시지 큐에 저장될 메시지의 내용
                                 if(body.equals("0")){
                                     Toast.makeText(Signup2.this, "회원가입에 성공하였습니다", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(Signup2.this, MainActivity.class);
+                                    intent.putExtra("loginUserId",id);
+                                    startActivity(intent);
+                                    finish();
                                 }else{
                                     Log.e("RESULT","에러 발생! ERRCODE = " + body);
                                     Toast.makeText(Signup2.this, "등록중 에러가 발생했습니다", Toast.LENGTH_SHORT).show();
@@ -663,9 +566,13 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
             if(i == 1){
                 String nick = null;
                 check = "1";
+                String encoNick = null;
                 try {
                     nick = (String) json.get("nick");
+                    encoNick = URLEncoder.encode(nick,"EUC-KR");
                 } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
                 RequestBody body = new FormBody.Builder()
@@ -673,7 +580,7 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                         .add("nick", nick)
                         .build();
                 Request request = new Request.Builder()
-                        .url("http://52.15.203.52/Login_Signup/Id_Nick_Check.php")
+                        .url("http://54.180.2.34/Login_Signup/Id_Nick_Check.php")
                         .post(body)
                         .build();
                 client.newCall(request).enqueue(callback);
@@ -686,16 +593,26 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                String encoId = null,encoPw = null,encoNick = null,encoEmail = null,encoProfile = null;
+                try {
+                     encoId = URLEncoder.encode(id,"EUC-KR");
+                     encoPw = URLEncoder.encode(pw,"EUC-KR");
+                     encoNick = URLEncoder.encode(nick,"EUC-KR");
+                     encoEmail = URLEncoder.encode(email,"EUC-KR");
+                     encoProfile = URLEncoder.encode(String.valueOf(copyFile),"EUC-KR");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 MediaType MEDIA_TYPE_JPG = MediaType.parse("image/*");
                 RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                        .addFormDataPart("id", id)
-                        .addFormDataPart("pw", pw)
-                        .addFormDataPart("nick", nick)
-                        .addFormDataPart("email", email)
-                        .addFormDataPart("file", String.valueOf(imgUri),RequestBody.create(MEDIA_TYPE_JPG, copyFile))
+                        .addFormDataPart("id", encoId)
+                        .addFormDataPart("pw", encoPw)
+                        .addFormDataPart("nick", encoNick)
+                        .addFormDataPart("email", encoEmail)
+                        .addFormDataPart("file", encoProfile,RequestBody.create(MultipartBody.FORM, copyFile))
                         .build();
                 Request request = new Request.Builder()
-                        .url("http://52.15.203.52/Login_Signup/Signup.php")
+                        .url("http://54.180.2.34/Login_Signup/Signup.php")
                         .post(body)
                         .build();
                 client.newCall(request).enqueue(callback);
