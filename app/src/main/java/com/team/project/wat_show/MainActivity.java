@@ -593,7 +593,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // 프로필 설정
         ImageView main_navi_userProfile = (ImageView) navi_View.findViewById(R.id.main_navi_userProfile);
-        Glide.with(this).load(ipad + "/" + loginUserPrfile).into(main_navi_userProfile);
+        Glide.with(this).load(ipad +loginUserPrfile).into(main_navi_userProfile);
 
     }
 
