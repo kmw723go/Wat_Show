@@ -178,9 +178,6 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                 break;
             }
             case FROM_CAMERA : {
-                Log.e("카메라",data.toString());
-                if(data.getData()!=null){
-                    imgUri = data.getData();
                     Intent intent = new Intent("com.android.camera.action.CROP");
                     intent.setDataAndType(imgUri, "image/*");
 
@@ -192,7 +189,6 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                     intent.putExtra("return-data", true);
                     startActivityForResult(intent, CROP_FROM_CAMERA);
 
-                }
                 break;
             }
             case CROP_FROM_CAMERA:
@@ -256,13 +252,10 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
 
         // 촬영 후 이미지 가져옴
 
-
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
             // 임시로 사용할 파일의 경로를 생성
             String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
             imgUri= Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
-            Log.e("포토",imgUri.toString());
             intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imgUri);
             startActivityForResult(intent, FROM_CAMERA);
 
@@ -274,13 +267,8 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
         //앨범 열기
 
         Intent intent = new Intent(Intent.ACTION_PICK);
-
         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
-
-
         intent.setType("image/*");
-
-
         startActivityForResult(intent, FROM_ALBUM);
 
     }
