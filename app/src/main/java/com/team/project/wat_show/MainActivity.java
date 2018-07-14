@@ -36,6 +36,7 @@ import com.team.project.wat_show.broadCast.broadCast_main;
 import com.team.project.wat_show.chargeUp_exchange.chargeUp_exchange_main;
 import com.team.project.wat_show.main_activity.main_viewPager_Adapter;
 import com.team.project.wat_show.serviceCenter.serviceCenter_main;
+import com.team.project.wat_show.upload_Videos.upload_videos_main;
 import com.team.project.wat_show.userPage.userPage_main;
 
 import java.io.IOException;
@@ -314,6 +315,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // 회원가입으로 이동
         gotoJoinPage();
 
+        // 동영상 업로드로 이동
+        gotoUploadVideos();
+
 
     }
 
@@ -345,6 +349,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(this, "로그인 상태가 아닙니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "logout", Toast.LENGTH_SHORT).show();
+                    loginOn = false;
+                    loginUserId ="";
+                    loginCheck();
                 }
                 return true;
             default:
@@ -429,6 +436,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 if (loginOn == true) {
                     Intent gotoBroadCast = new Intent(MainActivity.this, broadCast_main.class);
+                    startActivity(gotoBroadCast);
+                } else {
+                    Toast.makeText(MainActivity.this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                }
+
+              /*  // 아이템 클릭시  네비게이션 드로워 닫기
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.main_drawer);
+                drawer.closeDrawer(GravityCompat.START);*/
+            }
+        });
+    }
+
+    // 동영상 업로드 이동하기
+    public void gotoUploadVideos(){
+        navi_View = mNavigationView.getHeaderView(0);
+        LinearLayout nav_rec = (LinearLayout) navi_View.findViewById(R.id.nav_upload_Video);
+        nav_rec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (loginOn == true) {
+                    Intent gotoBroadCast = new Intent(MainActivity.this, upload_videos_main.class);
+                    gotoBroadCast.putExtra("loginUserId",loginUserId);
+                    gotoBroadCast.putExtra("loginUserNick",loginUserNick);
                     startActivity(gotoBroadCast);
                 } else {
                     Toast.makeText(MainActivity.this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();

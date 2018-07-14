@@ -93,6 +93,8 @@ public class Login extends AppCompatActivity implements
     }
     private void updateUI(@Nullable GoogleSignInAccount account) {
 
+
+
     }
 
     //뷰선언
