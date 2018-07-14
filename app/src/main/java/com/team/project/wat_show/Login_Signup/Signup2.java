@@ -178,19 +178,21 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                 break;
             }
             case FROM_CAMERA : {
+                Log.e("카메라",data.toString());
+                if(data.getData()!=null){
+                    imgUri = data.getData();
+                    Intent intent = new Intent("com.android.camera.action.CROP");
+                    intent.setDataAndType(imgUri, "image/*");
 
-                imgUri = data.getData();
-                Intent intent = new Intent("com.android.camera.action.CROP");
-                intent.setDataAndType(imgUri, "image/*");
-                intent.putExtra("outputX", 250);
-                intent.putExtra("outputY", 250);
-                intent.putExtra("aspectX", 1);
-                intent.putExtra("aspectY", 1);
-                intent.putExtra("scale", true);
-                intent.putExtra("return-data", true);
-                startActivityForResult(intent, CROP_FROM_CAMERA);
+                    intent.putExtra("outputX", 250);
+                    intent.putExtra("outputY", 250);
+                    intent.putExtra("aspectX", 1);
+                    intent.putExtra("aspectY", 1);
+                    intent.putExtra("scale", true);
+                    intent.putExtra("return-data", true);
+                    startActivityForResult(intent, CROP_FROM_CAMERA);
 
-
+                }
                 break;
             }
             case CROP_FROM_CAMERA:
@@ -254,23 +256,16 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
 
         // 촬영 후 이미지 가져옴
 
-        String state = Environment.getExternalStorageState();
-
-
-        if(Environment.MEDIA_MOUNTED.equals(state)){
 
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+            // 임시로 사용할 파일의 경로를 생성
             String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-            imgUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
+            imgUri= Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
+            Log.e("포토",imgUri.toString());
             intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imgUri);
             startActivityForResult(intent, FROM_CAMERA);
 
-
-        }else{
-            Log.v("알림", "저장공간에 접근 불가능");
-            return;
-        }
     }
 
     //앨범 선택 클릭
@@ -599,7 +594,7 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                      encoPw = URLEncoder.encode(pw,"UTF-8");
                      encoNick = URLEncoder.encode(nick,"UTF-8");
                      encoEmail = URLEncoder.encode(email,"UTF-8");
-                     encoProfile = URLEncoder.encode(String.valueOf(copyFile),"UTF-8");
+                     encoProfile = URLEncoder.encode("SmartWheel" + System.currentTimeMillis() + ".jpg","UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
