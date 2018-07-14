@@ -288,7 +288,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener{
         public void requestWebServer(String parameter, Callback callback) {
             String encoId =null;
             try {
-                encoId = URLEncoder.encode(parameter,"EUC-KR");
+                encoId = URLEncoder.encode(parameter,"UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
