@@ -1,7 +1,7 @@
 package com.team.project.wat_show.Login_Signup;
 
 import android.content.Intent;
-import android.support.annotation.Nullable;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,13 +9,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
 import com.team.project.wat_show.MainActivity;
 import com.team.project.wat_show.R;
 
@@ -34,8 +27,6 @@ import okhttp3.Response;
 public class Login extends AppCompatActivity implements
         View.OnClickListener{
 
-    private static final int RC_SIGN_IN = 9001;
-    private GoogleSignInClient mGoogleSignInClient;
     private HttpConnection httpConn = new HttpConnection();
     EditText id,pw;
     CheckBox idsave,autosave;
@@ -46,53 +37,33 @@ public class Login extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         findView();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.login).setOnClickListener(this);
         findViewById(R.id.Signup).setOnClickListener(this);
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // [START on_start_sign_in]
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
-        // [END on_start_sign_in]
+        findViewById(R.id.find_id_pw).setOnClickListener(this);
+        autosave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(idsave.isChecked() != true){
+                    Toast.makeText(Login.this, "ID를 먼저 저장해 주세요", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
-    // [START onActivityResult]
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
-        }
+    public void idSave(){
+        SharedPreferences sessionid = getSharedPreferences("idsave",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sessionid.edit();
+        editor.putString("sesstionId",id.getText().toString());
+        editor.commit();
     }
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
-            // Signed in successfully, show authenticated UI.
-            updateUI(account);
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            updateUI(null);
-        }
-    }
-    private void updateUI(@Nullable GoogleSignInAccount account) {
-
+    public void autologin(){
+        SharedPreferences sessionid = getSharedPreferences("idsave",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sessionid.edit();
+        editor.putString("autologin","true");
+        editor.commit();
     }
 
     //뷰선언
@@ -103,10 +74,9 @@ public class Login extends AppCompatActivity implements
         autosave = (CheckBox)findViewById(R.id.LoginAutoSave);
     }
 
-    // [END onActivityResult]
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+    private void find_id_pw() {
+        Intent findIntent = new Intent(Login.this,find_id_pw.class);
+        startActivity(findIntent);
     }
 
     private void login() {
@@ -122,14 +92,15 @@ public class Login extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.sign_in_button:
-                signIn();
-                break;
+
             case R.id.login:
                 login();
                 break;
             case R.id.Signup:
                 Signup();
+                break;
+            case R.id.find_id_pw:
+                find_id_pw();
                 break;
 
         }
@@ -153,8 +124,8 @@ public class Login extends AppCompatActivity implements
                 e.printStackTrace();
             }
             RequestBody body = new FormBody.Builder()
-                    .add("id", parameter)
-                    .add("pw",parameter2)
+                    .add("id", encoId)
+                    .add("pw",encoPw)
                     .build();
             Request request = new Request.Builder()
                     .url("http://54.180.2.34/Login_Signup/Login.php")
@@ -188,6 +159,13 @@ public class Login extends AppCompatActivity implements
                 Intent loginInIntent = new Intent(Login.this,MainActivity.class);
                 loginInIntent.putExtra("loginUserId",id.getText().toString());
                 setResult(loginReCode,loginInIntent);
+                if(idsave.isChecked() == true){
+                    idSave();
+                    if(autosave.isChecked() == true){
+                        autologin();
+                    }
+                }
+
                 finish();
             }else{
                 new Thread(new Runnable() {

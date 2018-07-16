@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "36088296403",
+    "firebase_url": "https://watshow-209708.firebaseio.com",
+    "project_id": "watshow-209708",
+    "storage_bucket": "watshow-209708.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:36088296403:android:84f46b991b728151",
+        "android_client_info": {
+          "package_name": "com.team.project.wat_show"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "36088296403-5qmdkshlmqekg2img6gdnancir3slplt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.team.project.wat_show",
+            "certificate_hash": "98c3c0f1b5750df5806de947c66bcf59ac58d235"
+          }
+        },
+        {
+          "client_id": "36088296403-oeum0h9dotshjig7iuv7rilq1o9lk8pt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqAcjShe6HnNocW8PM_epl74V193Is0mk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "36088296403-oeum0h9dotshjig7iuv7rilq1o9lk8pt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

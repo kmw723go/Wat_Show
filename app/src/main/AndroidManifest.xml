@@ -18,11 +18,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Login_Signup.Login"
-            android:theme="@style/singUp">
-
-        </activity>
-
-
+            android:theme="@style/singUp" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,14 +41,24 @@
             android:name=".broadCast.broadCast_main"
             android:theme="@style/nonTitleTheme" />
         <activity android:name=".appSetting.appSetting_main" />
-
         <activity
             android:name=".Login_Signup.Signup"
             android:theme="@style/singUp" />
         <activity
             android:name=".Login_Signup.Signup2"
             android:theme="@style/singUp" />
-        <activity android:name=".serviceCenter.serviceCenter_main"></activity>
+        <activity android:name=".serviceCenter.serviceCenter_main" />
+        <activity android:name=".Login_Signup.find_id_pw">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".authentication.userAuthentication"></activity>
     </application>
 
 </manifest>
