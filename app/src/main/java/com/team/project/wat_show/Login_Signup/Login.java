@@ -155,8 +155,8 @@ public class Login extends AppCompatActivity implements
                 e.printStackTrace();
             }
             RequestBody body = new FormBody.Builder()
-                    .add("id", parameter)
-                    .add("pw",parameter2)
+                    .add("id", encoId)
+                    .add("pw",encoPw)
                     .build();
             Request request = new Request.Builder()
                     .url("http://54.180.2.34/Login_Signup/Login.php")

@@ -544,7 +544,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // --------------------------- 서버 연결 -----------------------------------------------------
 
-    //사용자 정보 받아오기
+    //( 서버 연결 )사용자 정보 받아오기
     public void getUserDataOnHttp(String loginUserId) {
         class getDataFromHttp extends AsyncTask<Void, Void, String> {
 
@@ -563,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             protected String doInBackground(Void... voids) {
-                String serverUrl = "http://54.180.2.34/userData/getUserData.php";
+                String serverUrl = ipad+"/userData/getUserData.php";
                 String result = "";
                 try {
 

@@ -18,6 +18,12 @@ android {
     }
 }
 
+repositories{
+    maven{
+        url "http://dl.bintray.com/lukaville/maven"
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -47,4 +53,7 @@ dependencies {
 
     //원형이미지
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    // 파일 라이브러리
+    implementation 'com.nbsp:library:1.09'
 }
