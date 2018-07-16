@@ -586,7 +586,6 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                MediaType MEDIA_TYPE_JPG = MediaType.parse("image/*");
                 RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                         .addFormDataPart("id", encoId)
                         .addFormDataPart("pw", encoPw)
@@ -604,4 +603,6 @@ public class Signup2 extends AppCompatActivity implements View.OnClickListener{
         }
         
     }
+
+
 }

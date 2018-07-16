@@ -36,12 +36,8 @@ dependencies {
 
     //구글 로그인 api
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
-
-    // REST API
-    implementation 'com.google.api-client:google-api-client:1.22.0'
-    implementation 'com.google.api-client:google-api-client-android:1.22.0'
-    implementation 'com.google.apis:google-api-services-people:v1-rev139-1.22.0'
-
+    implementation 'com.google.firebase:firebase-auth:16.0.2'
+    implementation 'com.google.firebase:firebase-core:16.0.1'
     //Glide api
     implementation 'com.github.bumptech.glide:glide:4.0.0'
 
@@ -53,7 +49,11 @@ dependencies {
 
     //원형이미지
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation files('libs/activation.jar')
+    implementation files('libs/additionnal.jar')
+    implementation files('libs/mail.jar')
 
     // 파일 라이브러리
     implementation 'com.nbsp:library:1.09'
 }
+apply plugin: 'com.google.gms.google-services'

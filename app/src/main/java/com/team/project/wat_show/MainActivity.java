@@ -2,6 +2,7 @@ package com.team.project.wat_show;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -101,6 +102,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         getUserData();
 
+        SharedPreferences sessionid = getSharedPreferences("idsave",MODE_PRIVATE);
+        String idSaveCheck = sessionid.getString("autologin","false");
+        if(idSaveCheck.equals("true")){
+            loginOn = true;
+            getUserDataOnHttp(loginUserId);
+        }
     }
 
     public void getUserData() {
