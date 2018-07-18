@@ -49,7 +49,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import javax.annotation.Nullable;
 
 import okhttp3.Call;
 import okhttp3.Callback;

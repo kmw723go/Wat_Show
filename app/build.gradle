@@ -34,10 +34,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     api 'com.google.android.gms:play-services-auth:15.0.1'
 
-    //구글 로그인 api
-    implementation 'com.google.android.gms:play-services-auth:15.0.1'
-    implementation 'com.google.firebase:firebase-auth:16.0.2'
-    implementation 'com.google.firebase:firebase-core:16.0.1'
     //Glide api
     implementation 'com.github.bumptech.glide:glide:4.0.0'
 
@@ -56,4 +52,3 @@ dependencies {
     // 파일 라이브러리
     implementation 'com.nbsp:library:1.09'
 }
-apply plugin: 'com.google.gms.google-services'
