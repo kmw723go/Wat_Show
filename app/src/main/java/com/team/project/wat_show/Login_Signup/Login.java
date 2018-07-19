@@ -38,7 +38,6 @@ public class Login extends AppCompatActivity implements
         setContentView(R.layout.activity_login);
         findView();
 
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.login).setOnClickListener(this);
         findViewById(R.id.Signup).setOnClickListener(this);
         findViewById(R.id.find_id_pw).setOnClickListener(this);
