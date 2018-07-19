@@ -417,7 +417,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
 
                 if (loginOn == true) {
+                    Log.e("qzxczxczxctes1",loginUserId);
                     Intent gotoExchange = new Intent(MainActivity.this, chargeUp_exchange_main.class);
+                    gotoExchange.putExtra("loginUserId",loginUserId);
                     startActivity(gotoExchange);
                 } else {
                     Toast.makeText(MainActivity.this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
