@@ -400,7 +400,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 Intent gotoUserPage = new Intent(MainActivity.this, userPage_main.class);
-                startActivity(gotoUserPage);
+                gotoUserPage.putExtra("Id",loginUserId);
+                startActivityForResult(gotoUserPage,loginReCode);
             }
         });
     }
@@ -417,7 +418,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
 
                 if (loginOn == true) {
-                    Log.e("qzxczxczxctes1",loginUserId);
                     Intent gotoExchange = new Intent(MainActivity.this, chargeUp_exchange_main.class);
                     gotoExchange.putExtra("loginUserId",loginUserId);
                     startActivity(gotoExchange);

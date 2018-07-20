@@ -5,7 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
@@ -31,8 +33,15 @@ import com.team.project.wat_show.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 
 import okhttp3.Call;
@@ -45,10 +54,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class chargeUp_exchange_main extends AppCompatActivity {
-    private WebView authweb;
-    private WebSettings authwebSetting;
-    private final Handler handler = new Handler();
-    private HttpConnection httpConn = new HttpConnection();
+
+
     String loginUserId="";
     TextView moneyinput;
     RadioGroup moneyselcet;
@@ -70,16 +77,9 @@ public class chargeUp_exchange_main extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendData(loginUserId, String.valueOf(money));
-                selcetlayout.setVisibility(View.GONE);
 
-                authweb = (WebView)findViewById(R.id.charge_exchange);
-                authweb.setWebViewClient(new WebViewClient());
-                authwebSetting = authweb.getSettings();
-                authwebSetting.setJavaScriptEnabled(true);
-                authweb.addJavascriptInterface(new AndroidBridge(chargeUp_exchange_main.this),"WatShow");
-                authweb.loadUrl("http://54.180.2.34/Charge_Exchage/charge.php");
-                authweb.setVisibility(View.VISIBLE);
+                server_sender server_sender = new server_sender();
+                server_sender.execute();
             }
         });
 
@@ -98,6 +98,7 @@ public class chargeUp_exchange_main extends AppCompatActivity {
         submit = (Button)findViewById(R.id.chargesubmit);
         selcetlayout = (LinearLayout)findViewById(R.id.selcetlayout);
     }
+
     private void moneyselect(){
         moneyselcet.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -123,90 +124,64 @@ public class chargeUp_exchange_main extends AppCompatActivity {
         });
     }
 
-    private class AndroidBridge {
-        Context mContext;
-        /** Instantiate the interface and set the context */
-        AndroidBridge(Context c) {
-            mContext = c;
-        }
+    public class server_sender extends AsyncTask<Void, Integer, Void> {
+        String data = "";
+        String param = "id="+loginUserId+"&money="+money;
+        @Override
+        protected Void doInBackground(Void... unused) {
+            /* 인풋 파라메터값 생성 */
 
-        @JavascriptInterface
-        public void setMessage(final String arg) {
-
-            handler.post(new Runnable() {
-
-                public void run() {
-                    Log.e("qzxczxczxc",arg);
-                    new AlertDialog.Builder(chargeUp_exchange_main.this)
-                            .setTitle("알림")
-                            .setMessage(arg)
-                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-                            })
-                            .setCancelable(false)
-                            .create()
-                            .show();
-
-                }
-
-            });
-
-        }
-    }
-
-    public class HttpConnection {
-
-        private OkHttpClient client;
-
-        private HttpConnection(){ this.client = new OkHttpClient(); }
-
-
-        /** 웹 서버로 요청을 한다. */
-        public void requestWebServer(String parameter, String parameter2, Callback callback) {
-            String encoId =null,encoPw=null;
             try {
-                encoId = URLEncoder.encode(parameter,"UTF-8");
-                encoPw = URLEncoder.encode(parameter2,"UTF-8");
-            } catch (UnsupportedEncodingException e) {
+                /* 서버연결 */
+                URL url = new URL(
+                        "http://54.180.2.34/Charge_Exchage/valuesender.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.connect();
+
+                /* 안드로이드 -> 서버 파라메터값 전달 */
+                OutputStream outs = conn.getOutputStream();
+                outs.write(param.getBytes("UTF-8"));
+                outs.flush();
+                outs.close();
+
+                /* 서버 -> 안드로이드 파라메터값 전달 */
+                InputStream is = null;
+                BufferedReader in = null;
+
+
+                is = conn.getInputStream();
+                in = new BufferedReader(new InputStreamReader(is), 8 * 1024);
+                String line = null;
+                StringBuffer buff = new StringBuffer();
+                while ( ( line = in.readLine() ) != null )
+                {
+                    buff.append(line + "\n");
+                }
+                data = buff.toString().trim();
+
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            RequestBody body = new FormBody.Builder()
-                    .add("id", encoId)
-                    .add("money",encoPw)
-                    .build();
-            Log.e("qweqweqwrfa",encoId+"/////"+encoPw);
-            Request request = new Request.Builder()
-                    .url("http://54.180.2.34/Charge_Exchage/valuesender.php")
-                    .post(body)
-                    .build();
-            client.newCall(request).enqueue(callback);
+
+            return null;
         }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Log.e("qweqwda",data);
+
+            Intent intent = new Intent(chargeUp_exchange_main.this,chargeUp_exchange_main2.class);
+            startActivity(intent);
     }
 
-    private void sendData(final String id, final String money) {
-// 네트워크 통신하는 작업은 무조건 작업스레드를 생성해서 호출 해줄 것!!
-        new Thread() {
-            public void run() {
-// 파라미터 2개와 미리정의해논 콜백함수를 매개변수로 전달하여 호출
-                httpConn.requestWebServer(id,money, callback);
-            }
-        }.start();
+
     }
-
-    //http통신의 결과값 수신
-    private final Callback callback = new Callback() {
-        @Override
-        public void onFailure(Call call, IOException e) {
-        }
-        @Override
-        public void onResponse(Call call, Response response) throws IOException {
-            String body = response.body().string();
-
-
-        }
-    };
 }
