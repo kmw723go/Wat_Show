@@ -50,6 +50,9 @@
         <activity android:name=".serviceCenter.serviceCenter_main" />
         <activity
             android:name=".upload_Videos.upload_videos_main"
+            android:theme="@style/singUp" />
+        <activity android:name=".upload_Videos.video_upload_page" />
+
             android:theme="@style/nonTitleTheme" />
         <activity android:name=".upload_Videos.video_upload_page" />
         <activity android:name=".serviceCenter.serviceCenter_main" />
@@ -63,6 +66,8 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
+        <activity android:name=".authentication.userAuthentication" />
+        <activity android:name=".upload_Videos.showVideoContent"  android:theme="@style/singUp" ></activity>
         <activity android:name=".authentication.userAuthentication" />
         <activity android:name=".chargeUp_exchange.chargeUp_exchange_main2"></activity>
     </application>

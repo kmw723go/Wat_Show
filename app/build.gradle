@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.minwook.wat_show"
+        applicationId "com.team.project.wat_show"
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
@@ -45,6 +45,7 @@ dependencies {
 
     //원형이미지
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
     implementation files('libs/activation.jar')
     implementation files('libs/additionnal.jar')
     implementation files('libs/mail.jar')

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 동영상 컨텐츠 카테고리 -->
+    <string-array name = "spinner_teg">
+        <item>--키워드 설정--</item>
+        <item>코미디</item>
+        <item>게임</item>
+        <item>리뷰</item>
+        <item>라디오</item>
+        <item>뷰티</item>
+        <item>여행</item>
+        <item>음식</item>
+        <item>영화</item>
+        <item>음악</item>
+        <item>패션</item>
+        <item>기타</item>
+    </string-array>
+
+
+</resources>
