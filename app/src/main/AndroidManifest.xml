@@ -54,8 +54,6 @@
         <activity android:name=".upload_Videos.video_upload_page" />
 
             android:theme="@style/nonTitleTheme" />
-        <activity android:name=".upload_Videos.video_upload_page" />
-        <activity android:name=".serviceCenter.serviceCenter_main" />
         <activity android:name=".Login_Signup.find_id_pw">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -68,7 +66,6 @@
         </activity>
         <activity android:name=".authentication.userAuthentication" />
         <activity android:name=".upload_Videos.showVideoContent"  android:theme="@style/singUp" ></activity>
-        <activity android:name=".authentication.userAuthentication" />
         <activity android:name=".chargeUp_exchange.chargeUp_exchange_main2"></activity>
     </application>
 

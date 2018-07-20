@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" >
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#ff0000</item>
         <item name="colorPrimaryDark">#666666</item>
@@ -11,7 +11,7 @@
 
 
     <!-- 타이틀이 필요 없는 곳에서 사용하는 테마 ( 메니패스트에 적용해서 사용하시오.) -->
-    <style name="nonTitleTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="nonTitleTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#ff0000</item>
         <item name="colorPrimaryDark">#666666</item>
@@ -21,7 +21,7 @@
 
 
     <!-- 타이틀이 필요 없는 곳에서 사용하는 테마 ( 메니패스트에 적용해서 사용하시오.) -->
-    <style name="singUp" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="singUp">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#ff0000</item>
         <item name="colorPrimaryDark">#666666</item>
