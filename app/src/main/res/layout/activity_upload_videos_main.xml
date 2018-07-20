@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#e4e4e4"
     tools:context="com.team.project.wat_show.upload_Videos.upload_videos_main">
 
     <LinearLayout
@@ -43,17 +44,18 @@
             android:id="@+id/live_list_noContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="진행중인 방송이 없습니다."
+            android:text="업로드한 영상이 없습니다."
             android:textAlignment="center"
             android:textSize="30dp"
             android:visibility="visible" />
 
 
         <android.support.v7.widget.RecyclerView
-            android:visibility="gone"
             android:id="@+id/my_upload_videoList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone">
 
 
         </android.support.v7.widget.RecyclerView>

@@ -5,11 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Handler;
-import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -178,8 +176,9 @@ public class chargeUp_exchange_main extends AppCompatActivity {
                     .add("money",encoPw)
                     .build();
             Log.e("qweqweqwrfa",encoId+"/////"+encoPw);
+
             Request request = new Request.Builder()
-                    .url("http://54.180.2.34/Charge_Exchage/valuesender.php")
+                    .url("http://54.180.2.34/Charge_Exchage/charge.php")
                     .post(body)
                     .build();
             client.newCall(request).enqueue(callback);
@@ -205,6 +204,7 @@ public class chargeUp_exchange_main extends AppCompatActivity {
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             String body = response.body().string();
+            Log.d("test",body);
 
 
         }
