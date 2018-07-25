@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.LoginFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -80,7 +81,7 @@ public class video_upload_page extends AppCompatActivity {
     // 제목 , 설명 , 키워드
     String title;
     String explainComment;
-    String keyWord;
+    String keyWord="";
 
     // 작성시간
     String formatDate;
@@ -137,7 +138,6 @@ public class video_upload_page extends AppCompatActivity {
         loginUserNick = getIntent().getStringExtra("loginUserNick");
     }
 
-
     // 저장 버튼
     public void postData() {
         Button postVideoCotent_Btn = (Button) findViewById(R.id.postVideoCotent_Btn);
@@ -148,7 +148,6 @@ public class video_upload_page extends AppCompatActivity {
             }
         });
     }
-
 
     // (저장 )데이터 값 가져오기
     public void getData() {
@@ -161,9 +160,14 @@ public class video_upload_page extends AppCompatActivity {
         explainComment = upload_video_content.getText().toString();
 
 
+        Log.d("타이틀",title);
+        Log.d("설명",explainComment);
+        Log.d("키워드",keyWord);
+
+
         if(title.equals("")||TextUtils.isEmpty(title)||title==null||
                 explainComment.equals("")||TextUtils.isEmpty(explainComment)||explainComment==null||
-                keyWord.equals("")||TextUtils.isEmpty(keyWord)||keyWord==null ||
+                keyWord.equals("--키워드 설정--")|| keyWord.equals("")||TextUtils.isEmpty(keyWord)||keyWord==null ||
                 setVideo == false || setThum == false){
             Toast.makeText(this, "입력되지 않은 데이터가 있습니다.", Toast.LENGTH_SHORT).show();
         }else{
@@ -177,7 +181,6 @@ public class video_upload_page extends AppCompatActivity {
 
 
     }
-
 
     //  (서버 연결 ) 작성 데이터 전송
     public void sendVideoContentToServer() {
@@ -236,8 +239,6 @@ public class video_upload_page extends AppCompatActivity {
                     };
 
 
-
-
                     RequestBody requestBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
                             .addFormDataPart("loginUserId", loginUserId)
@@ -270,32 +271,30 @@ public class video_upload_page extends AppCompatActivity {
                             String result = response.body().string();
                             Log.d("결과", "" + result);
                             fd.close();
+
+                            video_upload_page.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        if ( dialog != null && dialog.isShowing()){
+                                            dialog.dismiss();
+                                        }
+                                    }catch (Exception e){
+
+                                    }
+                                }
+                            });
+
+                            // 종료
+                            setResult(RESULT_OK);
+                            finish();
                         }
                     });
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-
-
                 return null;
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                try {
-                    if ( dialog != null && dialog.isShowing()){
-                        dialog.dismiss();
-                    }
-                }catch (Exception e){
-
-                }
-                Toast.makeText(context, "게시물이 등록되었습니다.", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
-                finish();
-
-
             }
 
         }
@@ -313,7 +312,7 @@ public class video_upload_page extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if ( position == 0){
-                    keyWord = null;
+                    keyWord = "";
                 }else if( position == 1){
                     keyWord = "코미디";
                 }else if( position == 2){
@@ -539,7 +538,6 @@ public class video_upload_page extends AppCompatActivity {
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
-
 
 
 

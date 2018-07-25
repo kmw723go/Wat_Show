@@ -13,10 +13,12 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.team.project.wat_show.Login_Signup.Login;
 import com.team.project.wat_show.R;
 import com.team.project.wat_show.ip;
 
@@ -39,16 +41,16 @@ import okio.Okio;
 public class upload_videos_main extends AppCompatActivity {
 
     Integer up_Load_Code = 1111;
+    Integer delete_Code = 2222;
+    Integer edit_Code = 3333;
 
 
     //ip
     ip ip = new ip();
     String ipad = ip.getIp();
 
-
     String loginUserId;
     String loginUserNick;
-
 
     // 리사이클러뷰
     RecyclerView my_upload_videoList;
@@ -72,11 +74,8 @@ public class upload_videos_main extends AppCompatActivity {
 
         setContentView(R.layout.activity_upload_videos_main);
 
-
         // 사용자 아이디 받아오기
         getUserData();
-
-
 
         // 동영상 업로드 버튼
         gotoUpload();
@@ -91,7 +90,7 @@ public class upload_videos_main extends AppCompatActivity {
         loginUserNick = getIntent().getStringExtra("loginUserNick");
 
         // 데이터 받아오기
-        getMyUpload_data();
+       // getMyUpload_data();
     }
 
 
@@ -193,7 +192,8 @@ public class upload_videos_main extends AppCompatActivity {
         d1 = result.split("%%%");
         for( int i =0 ; i < d1.length; i++){
             d2 = d1[i].split("@@@");
-            content = new video_content(d2[0],d2[1],d2[2],d2[3],d2[4],d2[5],d2[6],d2[7]);
+            content = new video_content(d2[0],d2[1],d2[2],d2[3],d2[4],d2[5],d2[6],d2[7],d2[8],d2[9],
+                    Integer.parseInt(d2[10]),Integer.parseInt(d2[11]),Integer.parseInt(d2[12]),Integer.parseInt(d2[13]));
             video_datas.add(content);
         }
 
@@ -221,6 +221,7 @@ public class upload_videos_main extends AppCompatActivity {
         my_upload_videoList.setAdapter(vAdapter);
 
 
+
     }
 
     // -------------------------------- 동영상 업로드 이동 --------------------------------------------
@@ -241,21 +242,39 @@ public class upload_videos_main extends AppCompatActivity {
     // (인텐트 결과)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1111) {
+        if (requestCode == up_Load_Code) {
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "동영상 업로드 성공", Toast.LENGTH_SHORT).show();
-
-                // 데이터 비워주고
-                video_datas.clear();
-
-                // 데이터 받아오기
-                getMyUpload_data();
-
-                vAdapter.notifyDataSetChanged();
 
             } else {
                 Toast.makeText(this, "동영상 업로드 취소", Toast.LENGTH_SHORT).show();
             }
         }
+        else if(requestCode == delete_Code){
+            if (resultCode == RESULT_OK){
+                // showvideoContent에서  삭제한 경우 이쪽으로 돌아온다 .
+                Log.d("삭제 성공","삭제 성공");
+            }else if (requestCode == edit_Code){
+                // 수정시 이쪽으로 결과 반환
+                Log.d("수정 작업","수정작업");
+            }else{
+                Log.d("아무 작업도 않함","아무 작업도 안함");
+            }
+
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            video_datas.clear();
+            // 데이터 받아오기
+            getMyUpload_data();
+        }catch (Exception e){
+
+        }
+
     }
 }

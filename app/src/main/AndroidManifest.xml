@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Login_Signup.Login"
-            android:theme="@style/singUp"></activity>
+            android:theme="@style/singUp" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,8 +52,7 @@
             android:name=".upload_Videos.upload_videos_main"
             android:theme="@style/singUp" />
         <activity android:name=".upload_Videos.video_upload_page" />
-
-            android:theme="@style/nonTitleTheme" />
+        android:theme="@style/nonTitleTheme" />
         <activity android:name=".Login_Signup.find_id_pw">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -65,8 +64,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".authentication.userAuthentication" />
-        <activity android:name=".upload_Videos.showVideoContent"  android:theme="@style/singUp" ></activity>
-        <activity android:name=".chargeUp_exchange.chargeUp_exchange_main2"></activity>
+        <activity
+            android:name=".upload_Videos.showVideoContent"
+            android:theme="@style/singUp" />
+        <activity android:name=".chargeUp_exchange.chargeUp_exchange_main2" />
+        <activity android:name=".upload_Videos.video_test_page" />
+        <activity android:name=".upload_Videos.video_Edit_Page"></activity>
     </application>
 
 </manifest>

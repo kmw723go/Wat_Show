@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // 로그인 상태
     Boolean loginOn = false;
 
-
     // 네비게이션 메뉴가 열려있는지 확인하고, ( 백버튼시 숨겨주기 위함 )
     Boolean navi_open = false;
 
@@ -115,16 +114,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         try {
             loginUserId = getIntent().getStringExtra("loginUserId");
             if (!loginUserId.equals("") || loginUserId != null) {
-
                 loginOn = true;
                 getUserDataOnHttp(loginUserId);
             }else{
                 loginOn = false;
+
             }
+
         } catch (Exception e) {
-
+            loginUserId ="비로그인";
+            loginUserNick ="비로그인";
+            loginOn = false;
         }
-
 
     }
 
@@ -256,6 +257,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onTabSelected(TabLayout.Tab tab) {
                 int a = tab.getPosition();
 
+                Toast.makeText(MainActivity.this, ""+loginUserId, Toast.LENGTH_SHORT).show();
+
                 if (a == 0) { // 생방송
                     tabLayout.getTabAt(0).setIcon(R.drawable.live_selected);
                     tabLayout.getTabAt(1).setIcon(R.drawable.video_content);
@@ -274,7 +277,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                int a = tab.getPosition();
             }
 
             @Override
@@ -658,6 +660,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return false;
+    }
+
+
+    // ----------------------------- 프래그먼트에 값 전달 하기 ----------------------------------
+    public String getUserIdFromMain(){
+        return loginUserId;
+    }
+
+    public String getUserNickFromMain(){
+        return loginUserId;
     }
 
 }

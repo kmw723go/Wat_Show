@@ -12,11 +12,54 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <VideoView
-            android:id="@+id/video_view"
+        <!--제작자 메뉴-->
+        <LinearLayout
+            android:background="#ff0000"
+            android:gravity="end"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="#000000" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:id="@+id/makeUserMenu">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="수정"
+                android:id="@+id/edit_video_content"
+                android:textColor="#ffffff"
+                android:textSize="15dp"/>
+
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="삭제"
+                android:id="@+id/delete_video_content"
+                android:textColor="#ffffff"
+                android:textSize="15dp"/>
+
+
+        </LinearLayout>
+
+        <!-- 비디오 뷰-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="#000000"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal">
+
+            <VideoView
+                android:id="@+id/video_view"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+               />
+
+        </LinearLayout>
+
 
         <!-- 경계선 -->
         <ImageView
@@ -24,7 +67,6 @@
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
             android:src="@drawable/line" />
-
 
         <!-- 제목 -->
         <LinearLayout
@@ -38,9 +80,11 @@
                 android:layout_marginLeft="20dp"
                 android:layout_weight="1"
                 android:text="제목"
+                android:id="@+id/showVideoContent_title"
                 android:textSize="20sp" />
 
             <ImageView
+                android:id="@+id/show_explainBtn"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_gravity="center_vertical"
@@ -57,6 +101,210 @@
             android:scaleType="fitXY"
             android:src="@drawable/line" />
 
+        <!--작성자 정보 , 좋아요 싫어요, 즐겨찾기 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <!-- 작성자 정보-->
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/video_maker_user_profile"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/default_profile_image" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/video_maker_user_Nick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="닉네임"
+                    android:textSize="15sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="구독 :"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/video_content_sCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:text="123명"
+                        android:textSize="13sp" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="3dp"
+                android:layout_weight="1"
+                android:text="구독"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="3dp"
+                android:text="구독중"
+                android:textSize="15sp"
+                android:visibility="gone" />
+
+            <!-- 좋아요-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:orientation="vertical">
+                <!-- 추천-->
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/recommend" />
+
+                <TextView
+                    android:id="@+id/recoCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="1234"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!--싫어요-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:orientation="vertical">
+
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/unrecommend" />
+
+                <TextView
+                    android:id="@+id/unrecoCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="1234"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+            <!--즐겨찾기 추가 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/my_list_add" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="즐겨찾기\n  추가"
+                    android:textSize="10sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 경계선 -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/line" />
+
+        <!-- 설명 란 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:id="@+id/explainLayout">
+
+            <LinearLayout
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="키워드 : "
+                    android:textSize="15sp"/>
+
+                <TextView
+                    android:id="@+id/video_content_keyWord"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="게임"
+                    android:textSize="15sp" />
+
+
+            </LinearLayout>
+
+            <!-- 경계선 -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:src="@drawable/line" />
+
+
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:id="@+id/video_content_explain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="설명란"
+                android:minLines="5"
+                android:textSize="13sp"
+               />
+
+
+        </LinearLayout>
+
+        <!-- 댓글 란 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
 
     </LinearLayout>
 
