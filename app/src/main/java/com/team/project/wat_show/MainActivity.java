@@ -257,7 +257,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onTabSelected(TabLayout.Tab tab) {
                 int a = tab.getPosition();
 
-                Toast.makeText(MainActivity.this, ""+loginUserId, Toast.LENGTH_SHORT).show();
 
                 if (a == 0) { // 생방송
                     tabLayout.getTabAt(0).setIcon(R.drawable.live_selected);

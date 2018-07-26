@@ -15,10 +15,10 @@ public class video_content implements Serializable {
     public String content_thPath;
     public String content_time;
 
-    public int hits;
-    public int recommend;
-    public int unrecommend;
-    public int sCount;
+    public int hits; // 조횟수
+    public int recommend; //추천수
+    public int unrecommend; // 비추천수
+    public int sCount;  // 구독수
 
 
     public video_content(String dataNo, String makeUserId, String makeUserNick, String makeUserProfile, String content_title, String content_explain, String content_keyWord,

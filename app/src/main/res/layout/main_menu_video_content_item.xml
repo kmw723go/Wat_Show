@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vList_ItemLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/vList_thum"
         android:layout_width="match_parent"
         android:layout_height="200dp" />
 
@@ -32,11 +34,13 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
 
+                android:id="@+id/vList_mkUserProfile"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/default_profile_image" />
 
             <TextView
+                android:id="@+id/vList_mkUserNick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -54,26 +58,29 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/vList_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="제목"
                 android:textSize="20sp" />
 
             <LinearLayout
-                android:layout_marginTop="3dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp">
 
                 <TextView
+                    android:id="@+id/vList_keyWord"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="키워드" />
 
                 <TextView
-                    android:layout_marginLeft="10dp"
+                    android:id="@+id/vList_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="작성일"/>
+                    android:layout_marginLeft="10dp"
+                    android:text="작성일" />
 
             </LinearLayout>
 
@@ -101,6 +108,7 @@
                     android:src="@drawable/recommend" />
 
                 <TextView
+                    android:id="@+id/vList_recoC"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="10" />
@@ -119,6 +127,7 @@
                     android:src="@drawable/unrecommend" />
 
                 <TextView
+                    android:id="@+id/vList_unrecoC"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="10" />
@@ -137,6 +146,7 @@
                     android:src="@drawable/eye" />
 
                 <TextView
+                    android:id="@+id/vList_viewC"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="10" />

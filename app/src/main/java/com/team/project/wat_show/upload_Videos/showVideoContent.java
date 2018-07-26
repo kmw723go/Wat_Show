@@ -59,7 +59,6 @@ public class showVideoContent extends AppCompatActivity {
 
         setContentView(R.layout.show_video_content);
 
-
         // 사용자 및 컨텐츠 데이터 받아오기
         getUserData();
 
@@ -73,6 +72,11 @@ public class showVideoContent extends AppCompatActivity {
         // 비로그인 사용자 인경우에는 loginUserId를 따로 처리해야 것다 .
         // 데이터 뿌려주기
         setDataContent();
+    }
+
+    // ( 서버 연결 ) 사용자 프로필과, 추천 비추천, 즐겨찾기 상태 받아오기
+    public void getUserDataHttp(){
+
     }
 
     // 비디오 데이터 뿌려주기
@@ -150,7 +154,6 @@ public class showVideoContent extends AppCompatActivity {
         edit_data();
 
     }
-
 
     // 비디오 설정
     public void setVideos(){
@@ -354,5 +357,46 @@ public class showVideoContent extends AppCompatActivity {
         });
 
     }
+
+    //--------------------------------------- 버튼 이벤트 ----------------------------------------
+   // 추천 비추천 이벤트
+    public void recoBtnEvent(){
+
+        // 추천 버튼
+        ImageView recoBtn = (ImageView)findViewById(R.id.recoBtn);
+        recoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
+
+        // 비추천 버튼
+        ImageView unrecoBtn = (ImageView)findViewById(R.id.unrecoBtn);
+        unrecoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+    }
+
+    // 즐겨찾기
+    public void myListBtnEvent(){
+
+        //즐겨찾기 버튼
+        ImageView mylist_Vcontent =(ImageView)findViewById(R.id.mylist_Vcontent);
+        mylist_Vcontent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+
 
 }

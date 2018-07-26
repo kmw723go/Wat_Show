@@ -3,6 +3,7 @@ package com.team.project.wat_show.main_activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.TokenWatcher;
@@ -12,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 import com.team.project.wat_show.MainActivity;
 import com.team.project.wat_show.R;
 import com.team.project.wat_show.ip;
+import com.team.project.wat_show.upload_Videos.showVideoContent;
 import com.team.project.wat_show.upload_Videos.video_content;
 
 import java.io.IOException;
@@ -62,10 +65,8 @@ public class Menu_videoContent extends Fragment {
 
     videoContent_adepter content_adepter;
 
-    String [] d1;
-    String [] d2;
-
-
+    String[] d1;
+    String[] d2;
 
 
     public Menu_videoContent() {
@@ -86,13 +87,13 @@ public class Menu_videoContent extends Fragment {
                              Bundle savedInstanceState) {
 
         // 인플레이트
-       view = inflater.inflate(R.layout.fragment_menu_video_content, container, false);
+        view = inflater.inflate(R.layout.fragment_menu_video_content, container, false);
 
-       try{
-           getVideoContentDataHttp();
-       }catch (NullPointerException e){
+        try {
+            getVideoContentDataHttp();
+        } catch (NullPointerException e) {
 
-       }
+        }
 
 
         return view;
@@ -100,33 +101,31 @@ public class Menu_videoContent extends Fragment {
 
 
     //--------------------------------- 리사이클러뷰 세팅 -----------------------------------------
-    public void setLive_list_RecyclerView(){
+    public void setLive_list_RecyclerView() {
 
         // 리사이클러 뷰 불러오기
-        videoContent_RecyclerView =(RecyclerView)view.findViewById(R.id.video_content_RecyclerView);
+        videoContent_RecyclerView = (RecyclerView) view.findViewById(R.id.video_content_RecyclerView);
 
         // 리사이클러뷰 설정
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         videoContent_RecyclerView.setLayoutManager(layoutManager);
 
-        content_adepter = new videoContent_adepter(getContext(),video_datas,((MainActivity)getActivity()).getUserIdFromMain());
-        my_upload_videoList.setAdapter(content_adepter);
+        content_adepter = new videoContent_adepter(getContext(), video_datas);
+        videoContent_RecyclerView.setAdapter(content_adepter);
 
+
+        // 아이템 클릭 이벤트
+        ItemClick();
     }
 
     // ( 서버 연결 )데이터 불러오기
-    public void getVideoContentDataHttp(){
+    public void getVideoContentDataHttp() {
         class getDataFromHttp extends AsyncTask<Void, Void, String> {
 
             OkHttpClient client = new OkHttpClient();
 
-            String loginUserId;
             ProgressDialog dialog = new ProgressDialog(getContext());
-
-            public getDataFromHttp(String loginUserId) {
-                this.loginUserId = loginUserId;
-            }
 
             @Override
             protected void onPreExecute() {
@@ -140,7 +139,7 @@ public class Menu_videoContent extends Fragment {
 
             @Override
             protected String doInBackground(Void... voids) {
-                String serverUrl = ipad+"/upload_Videos/main_get_all_data.php";
+                String serverUrl = ipad + "/upload_Videos/main_get_all_data.php";
                 String result = "";
                 try {
                     // 보낼 데이터 담기
@@ -149,7 +148,7 @@ public class Menu_videoContent extends Fragment {
                             .build();
 
                     // 요청하면서  데이터 보내기
-                    Request request = new Request.Builder()
+                    final Request request = new Request.Builder()
                             .url(serverUrl)
                             .post(sendDatas)
                             .build();
@@ -165,9 +164,7 @@ public class Menu_videoContent extends Fragment {
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
-                            String result = response.body().string();
-                            Log.d("프레그먼트 비디오 결과", "" + result);
-                            divideData(result);
+                            // String result = response.body().string();
                         }
                     });
 
@@ -187,35 +184,54 @@ public class Menu_videoContent extends Fragment {
             protected void onPostExecute(String a) {
                 super.onPostExecute(a);
                 try {
-                    if ( dialog != null && dialog.isShowing()){
+                    if (dialog != null && dialog.isShowing()) {
                         dialog.dismiss();
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
+
+                Log.d("들어온 데이터", a);
+
+                divideData(a);
             }
         }  // 클래스 끝
 
         // Url. 연결
-        new getDataFromHttp(loginUserId).execute();
+        new getDataFromHttp().execute();
     }
 
     // 데이터 쪼개기
-    public void divideData(String result){
+    public void divideData(String result) {
 
-        if(result.equals("없음")){
-        }else{
+        if (result.equals("없음")) {
+            Log.d("메인 F 동영상 불러오기 결과", "없음");
+            TextView video_content_noContent = (TextView) view.findViewById(R.id.video_content_noContent);
+            video_content_noContent.setVisibility(View.VISIBLE);
+
+            RecyclerView video_content_RecyclerView = (RecyclerView) view.findViewById(R.id.video_content_RecyclerView);
+            video_content_RecyclerView.setVisibility(View.GONE);
+
+        } else {
+            TextView video_content_noContent = (TextView) view.findViewById(R.id.video_content_noContent);
+            video_content_noContent.setVisibility(View.GONE);
+
+            RecyclerView video_content_RecyclerView = (RecyclerView) view.findViewById(R.id.video_content_RecyclerView);
+            video_content_RecyclerView.setVisibility(View.VISIBLE);
+
+
             d1 = result.split("%%%");
-            for( int i =0 ; i < d1.length; i++){
+            for (int i = 0; i < d1.length; i++) {
                 d2 = d1[i].split("@@@");
-                content = new video_content(d2[0],d2[1],d2[2],d2[3],d2[4],d2[5],d2[6],d2[7],d2[8],d2[9],
-                        Integer.parseInt(d2[10]),Integer.parseInt(d2[11]),Integer.parseInt(d2[12]),Integer.parseInt(d2[13]));
+                content = new video_content(d2[0], d2[1], d2[2], d2[3], d2[4], d2[5], d2[6], d2[7], d2[8], d2[9],
+                        Integer.parseInt(d2[10]), Integer.parseInt(d2[11]), Integer.parseInt(d2[12]), Integer.parseInt(d2[13]));
                 video_datas.add(content);
             }
 
+            setLive_list_RecyclerView();
             // 리사이클러 뷰 세팅
             try {
-                setLive_list_RecyclerView();
+
             } catch (Exception e) {
 
             }
@@ -224,5 +240,35 @@ public class Menu_videoContent extends Fragment {
 
     }
 
+    // 아이템 클릭 이벤트
+    public void ItemClick() {
+        videoContent_RecyclerView.addOnItemTouchListener(new video_content_itemClickListener(getActivity(), videoContent_RecyclerView,
+                new video_content_itemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
 
+                        // Toast.makeText(getContext(), ""+position, Toast.LENGTH_SHORT).show();
+
+                        // 인텐트로 showVideoContent 에  객체와  로그인 아이디 전달.
+
+                        loginUserId = ((MainActivity) getActivity()).getUserIdFromMain();
+                        loginUserNick = ((MainActivity) getActivity()).getUserNickFromMain();
+
+                        Log.d("로그인 아이디 ", "" + loginUserId);
+
+                        video_content getDataContent = video_datas.get(position);
+
+                        Intent gotoShowVContent = new Intent(getContext(),showVideoContent.class);
+                        gotoShowVContent.putExtra("showData",getDataContent);
+                        gotoShowVContent.putExtra("loginUserId",loginUserId);
+                        startActivity(gotoShowVContent);
+
+                    }
+
+                    @Override
+                    public void onItemLongClick(View view, int position) {
+
+                    }
+                }));
+    }
 }
