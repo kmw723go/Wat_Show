@@ -252,22 +252,22 @@
 
         <!-- 설명 란 -->
         <LinearLayout
+            android:id="@+id/explainLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
-            android:id="@+id/explainLayout">
+            android:visibility="gone">
 
             <LinearLayout
-                android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="키워드 : "
-                    android:textSize="15sp"/>
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/video_content_keyWord"
@@ -289,15 +289,14 @@
 
 
             <TextView
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:id="@+id/video_content_explain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="설명란"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:minLines="5"
-                android:textSize="13sp"
-               />
+                android:text="설명란"
+                android:textSize="13sp" />
 
 
         </LinearLayout>
@@ -308,6 +307,43 @@
             android:layout_height="wrap_content">
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/video_reple_writepro"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                app:srcCompat="@drawable/default_profile_image" />
+
+            <EditText
+                android:id="@+id/video_reple_writeinput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:ems="10"
+                android:inputType="textPersonName" />
+
+            <ImageView
+                android:id="@+id/video_reple_writesend"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                app:srcCompat="@android:drawable/ic_menu_send" />
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/video_reple_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
