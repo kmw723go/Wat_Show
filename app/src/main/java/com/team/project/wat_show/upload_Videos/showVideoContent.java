@@ -70,16 +70,85 @@ public class showVideoContent extends AppCompatActivity {
         loginUserId = getIntent().getStringExtra("loginUserId").toString();
 
         // 비로그인 사용자 인경우에는 loginUserId를 따로 처리해야 것다 .
+
+        // 로그인 사용자 정보 가져오기
+        if(loginUserId.equals("비로그인")){
+
+        }else{
+            getUserDataHttp();
+        }
+
+
         // 데이터 뿌려주기
         setDataContent();
+
     }
 
     // ( 서버 연결 ) 사용자 프로필과, 추천 비추천, 즐겨찾기 상태 받아오기
     public void getUserDataHttp(){
+        class getUserDatas extends AsyncTask<Void,Void,String>{
+            OkHttpClient client = new OkHttpClient();
+            ProgressDialog dialog = new ProgressDialog(showVideoContent.this);
 
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("데이터 수신중..");
+                dialog.setCanceledOnTouchOutside(false); // 바깥 터치 안되게
+                dialog.setCancelable(false); // 뒤로가기로 캔슬시키는거 안되게
+                dialog.show();
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+
+                String serverUrl = ipad+"/userData/userRecoDatas.php";
+                String result = "";
+                try {
+                    // 보낼 데이터 담기
+                    RequestBody sendDatas = new FormBody.Builder()
+                            .add("loginUserId", loginUserId)
+                            .add("no",vc.dataNo)
+                            .build();
+
+                    // 요청하면서  데이터 보내기
+                    Request request = new Request.Builder()
+                            .url(serverUrl)
+                            .post(sendDatas)
+                            .build();
+
+                    // 응답  (response.body().string() 는  1회만 사용이 가능하다 )
+                    Response response = client.newCall(request).execute();
+                    result = response.body().string();
+
+                    Log.d("showVideoContent 사용자 정보",result);
+
+                }catch (Exception e){
+                }
+                    // 가지고 온 데이터
+                    return result;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                try {
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                } catch (Exception e) {
+
+                }
+                Log.d("사용자 정보 결과",""+s);
+            }
+        }
+
+        getUserDatas gUD = new getUserDatas();
+        gUD.execute();
     }
 
-    // 비디오 데이터 뿌려주기
+    // 데이터 뿌려주기
     public void setDataContent(){
 
         // 제작자 메뉴 설정
@@ -140,6 +209,8 @@ public class showVideoContent extends AppCompatActivity {
             }
         });
 
+        
+
         // 미디어 컨트롤러
         mc = new MediaController(this);
 
@@ -159,8 +230,6 @@ public class showVideoContent extends AppCompatActivity {
     public void setVideos(){
 
         //비디오 사이즈 재설정을 필요로 함
-
-
         String url = ipad+"/Video_dir/"+vc.content_vPath;
 
 
@@ -180,13 +249,6 @@ public class showVideoContent extends AppCompatActivity {
                 video_view.start();
             }
         });
-
-
-
-
-
-
-
 
     }
 
