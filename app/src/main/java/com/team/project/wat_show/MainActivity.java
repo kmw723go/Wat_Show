@@ -13,7 +13,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -29,7 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.Resource;
 import com.team.project.wat_show.Login_Signup.Login;
 import com.team.project.wat_show.Login_Signup.Signup;
 import com.team.project.wat_show.appSetting.appSetting_main;
@@ -37,13 +34,13 @@ import com.team.project.wat_show.broadCast.broadCast_main;
 import com.team.project.wat_show.chargeUp_exchange.chargeUp_exchange_main;
 import com.team.project.wat_show.main_activity.main_viewPager_Adapter;
 import com.team.project.wat_show.serviceCenter.serviceCenter_main;
+import com.team.project.wat_show.upload_Videos.showVideoContent;
 import com.team.project.wat_show.upload_Videos.upload_videos_main;
 import com.team.project.wat_show.userPage.userPage_main;
 
 import java.io.IOException;
 
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;

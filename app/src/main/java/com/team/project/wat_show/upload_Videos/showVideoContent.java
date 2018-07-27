@@ -1,6 +1,7 @@
 package com.team.project.wat_show.upload_Videos;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -9,9 +10,14 @@ import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
@@ -24,6 +30,7 @@ import com.team.project.wat_show.R;
 import com.team.project.wat_show.ip;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -37,7 +44,8 @@ public class showVideoContent extends AppCompatActivity {
 
     String loginUserId;
     video_content vc;
-
+    EditText writeinput;
+    ImageView writesend;
 
     //ip
     ip ip = new ip();
@@ -49,6 +57,11 @@ public class showVideoContent extends AppCompatActivity {
     // 동영상 관련
     MediaController mc;
 
+    //댓글 관련
+    Video_reple_adapter vr_adapter;
+    RecyclerView video_reple_list;
+    ArrayList<video_reple> reple_data = new ArrayList<video_reple>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +72,13 @@ public class showVideoContent extends AppCompatActivity {
 
         setContentView(R.layout.show_video_content);
 
+
         // 사용자 및 컨텐츠 데이터 받아오기
         getUserData();
+        //댓글 정보 받아오기
+        setRepleHttp();
 
+        writesetting();
     }
 
     // 사용자 데이터 받아오기
@@ -154,6 +171,7 @@ public class showVideoContent extends AppCompatActivity {
         edit_data();
 
     }
+
 
     // 비디오 설정
     public void setVideos(){
@@ -397,6 +415,342 @@ public class showVideoContent extends AppCompatActivity {
         });
     }
 
+
+
+    //댓글 불러오기
+    public void setRepleHttp(){
+        class RepleCallHttp extends AsyncTask<Void, Void, String> {
+
+            OkHttpClient client = new OkHttpClient();
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                String serverUrl = ipad+"/upload_Videos/video_reple_send.php";
+                String result = "";
+                try {
+
+                    // 보낼 데이터 담기
+                    RequestBody sendDatas = new FormBody.Builder()
+                            .add("vcontentNo", vc.dataNo)
+                            .build();
+
+                    // 요청하면서  데이터 보내기
+                    Request request = new Request.Builder()
+                            .url(serverUrl)
+                            .post(sendDatas)
+                            .build();
+
+                    // 응답  (response.body().string() 는  1회만 사용이 가능하다 )
+                    Response response = client.newCall(request).execute();
+
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+
+
+                        }
+                    });
+
+                    // 가지고 온 데이터
+                    result = response.body().string();
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String a) {
+                super.onPostExecute(a);
+
+                video_reple_list = (RecyclerView)findViewById(R.id.video_reple_list);
+                // 리사이클러뷰 설정
+                LinearLayoutManager layoutManager = new LinearLayoutManager(showVideoContent.this);
+                layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                video_reple_list.setLayoutManager(layoutManager);
+                vr_adapter = new Video_reple_adapter(showVideoContent.this,reple_data);
+
+                    String[] data = a.split("//");
+                    for (int i = 0; i < data.length; i++) {
+                        String[] item = data[i].split(",");
+                        Log.e("qweqwer",item[i]);
+                        if(item[i].equals("")){
+
+                        }else {
+                            reple_data.add(new video_reple(item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8]));
+                        }
+                    }
+
+
+                    video_reple_list.setAdapter(vr_adapter);
+
+
+
+
+            }
+        }  // 클래스 끝
+
+        // Url. 연결
+        new RepleCallHttp().execute();
+    }
+
+    //댓글 쓰기 설정
+    public void writesetting(){
+         writeinput = (EditText)findViewById(R.id.video_reple_writeinput);
+         writesend = (ImageView)findViewById(R.id.video_reple_writesend);
+        if(loginUserId.equals("비로그인")){
+            writeinput.setText("로그인이 필요한 기능입니다.");
+            writeinput.setClickable(false);
+            writeinput.setEnabled(false);
+            writeinput.setFocusable(false);
+            writeinput.setFocusableInTouchMode(false);
+        }else {
+            writeinput.setClickable(true);
+            writeinput.setEnabled(true);
+            writeinput.setFocusable(true);
+            writeinput.setFocusableInTouchMode(true);
+            writesend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                writeReple();
+                }
+            });
+        }
+    }
+
+    //댓글 쓰기
+    public void writeReple(){
+
+
+        class RepleWriteHttp extends AsyncTask<Void, Void, String> {
+
+            OkHttpClient client = new OkHttpClient();
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                String serverUrl = ipad+"/upload_Videos/video_reple_write.php";
+                String result = "";
+                try {
+
+                    // 보낼 데이터 담기
+                    RequestBody sendDatas = new FormBody.Builder()
+                            .add("vcontentNo", vc.dataNo)
+                            .build();
+
+                    // 요청하면서  데이터 보내기
+                    Request request = new Request.Builder()
+                            .url(serverUrl)
+                            .post(sendDatas)
+                            .build();
+
+                    // 응답  (response.body().string() 는  1회만 사용이 가능하다 )
+                    Response response = client.newCall(request).execute();
+
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+
+
+                        }
+                    });
+
+                    // 가지고 온 데이터
+                    result = response.body().string();
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String a) {
+                super.onPostExecute(a);
+
+                Toast.makeText(showVideoContent.this, "성공", Toast.LENGTH_SHORT).show();
+
+
+
+
+            }
+        }  // 클래스 끝
+
+        // Url. 연결
+        new RepleWriteHttp().execute();
+    }
+
+    //댓글 클릭시,짧게는 대댓글달기 및 대댓글창으로 이동, 길게는 수정및 삭제 선택
+    public void Repleclick(){
+        video_reple_list.addOnItemTouchListener(new RecyclerViewOnItemClickListener(showVideoContent.this, video_reple_list,
+                new RecyclerViewOnItemClickListener.OnItemClickListener() {
+            @Override public void onItemClick(View v, int position) {
+                Intent intent = new Intent();
+                startActivity(intent);
+            }
+            @Override public void onItemLongClick(View v, final int position) {
+                AlertDialog.Builder dataSelect = new AlertDialog.Builder(showVideoContent.this);
+                dataSelect.setTitle("알림");
+                dataSelect.setMessage("댓글 수정이나 삭제를 하시겠습니까?");
+
+                dataSelect.setPositiveButton("삭제",new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+
+                dataSelect.setNeutralButton("수정", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        writeinput.setText(vr_adapter.Repleedit(position));
+                        Repleedit(position);
+                    }
+                });
+
+                dataSelect.setNegativeButton("취소",new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                dataSelect.show();   // 실행
+            }
+        }
+        ));
+
+    }
+
+    //댓글 수정
+    public void Repleedit(int i){
+        class RepleWriteHttp extends AsyncTask<Void, Void, String> {
+
+            OkHttpClient client = new OkHttpClient();
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                String serverUrl = ipad+"/upload_Videos/video_reple_write.php";
+                String result = "";
+                try {
+
+                    // 보낼 데이터 담기
+                    RequestBody sendDatas = new FormBody.Builder()
+                            .add("vcontentNo", vc.dataNo)
+                            .build();
+
+                    // 요청하면서  데이터 보내기
+                    Request request = new Request.Builder()
+                            .url(serverUrl)
+                            .post(sendDatas)
+                            .build();
+
+                    // 응답  (response.body().string() 는  1회만 사용이 가능하다 )
+                    Response response = client.newCall(request).execute();
+
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+
+
+                        }
+                    });
+
+                    // 가지고 온 데이터
+                    result = response.body().string();
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String a) {
+                super.onPostExecute(a);
+
+                Toast.makeText(showVideoContent.this, "성공", Toast.LENGTH_SHORT).show();
+
+
+
+
+            }
+        }  // 클래스 끝
+
+        // Url. 연결
+        new RepleWriteHttp().execute();
+
+    }
+
+    //리사이클러뷰 온클릭 리스너 클래스
+    public static class RecyclerViewOnItemClickListener extends RecyclerView.SimpleOnItemTouchListener {
+        private OnItemClickListener mListener;
+        private GestureDetector mGestureDetector;
+        public RecyclerViewOnItemClickListener(Context context, final RecyclerView recyclerView, OnItemClickListener listener) {
+            this.mListener = listener;
+            mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+                @Override public void onLongPress(MotionEvent e) {
+                    View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                    if(childView != null && mListener != null){
+                        mListener.onItemLongClick(childView, recyclerView.getChildAdapterPosition(childView));
+                    }
+                }
+            });
+        }
+        @Override public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+                mListener.onItemClick(child, rv.getChildAdapterPosition(child));
+                return true;
+            }
+            return false;
+        }
+        public interface OnItemClickListener {
+            void onItemClick(View v, int position);
+            void onItemLongClick(View v, int position);
+        }
+    }
 
 
 }
