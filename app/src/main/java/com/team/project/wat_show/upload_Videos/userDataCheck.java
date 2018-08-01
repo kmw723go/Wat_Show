@@ -5,9 +5,15 @@ public class userDataCheck  {
     public String loginUserId;
     public String loginUserNick;
     public String loginUserProfile;
-    public String reco;   // 1이면 추천 0 면 해제
-    public String unreco;  // 1이면  비추천 0 면 해제
-    public String mylistVcontent; // 1이면 추천  0 면 해제
+    public String reco;   // 0 미선택  1 추천 2 비추천
+    public String mylistVcontent; // 0 미선택 1 즐겨찾기
 
 
+    public userDataCheck(String loginUserId, String loginUserNick, String loginUserProfile, String reco, String mylistVcontent) {
+        this.loginUserId = loginUserId;
+        this.loginUserNick = loginUserNick;
+        this.loginUserProfile = loginUserProfile;
+        this.reco = reco;
+        this.mylistVcontent = mylistVcontent;
+    }
 }

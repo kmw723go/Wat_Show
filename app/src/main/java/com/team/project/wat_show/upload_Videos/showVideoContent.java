@@ -62,6 +62,12 @@ public class showVideoContent extends AppCompatActivity {
     RecyclerView video_reple_list;
     ArrayList<video_reple> reple_data = new ArrayList<video_reple>();
 
+    // 로그인 유저 정보
+    userDataCheck uDC;
+    boolean setReco = false;
+    boolean setUnreco = false;
+    boolean setMyList = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +85,12 @@ public class showVideoContent extends AppCompatActivity {
         setRepleHttp();
 
         writesetting();
+
+        // 추천 비추천 버튼 이벤트
+        recoBtnEvent();
+
+        // 즐겨찾기 버튼 이벤트
+        myListBtnEvent();
     }
 
     // 사용자 데이터 받아오기
@@ -158,6 +170,7 @@ public class showVideoContent extends AppCompatActivity {
 
                 }
                 Log.d("사용자 정보 결과",""+s);
+                divideUserData(s);
             }
         }
 
@@ -165,7 +178,19 @@ public class showVideoContent extends AppCompatActivity {
         gUD.execute();
     }
 
-    // 데이터 뿌려주기
+    // 사용자 데이터 쪼개주기 + 뿌려주기
+    public void divideUserData(String result){
+        String [] a = result.split("@@@");
+        uDC = new userDataCheck(loginUserId,a[0],a[1],a[2],a[3]);
+
+        // 로그인 사용자 이미지 뷰
+        ImageView video_reple_writepro = (ImageView)findViewById(R.id.video_reple_writepro);
+        Glide.with(this).load(ipad+uDC.loginUserProfile).into(video_reple_writepro);
+    }
+
+    // -----------------------------------사용자 데이터 ---------------------------------------
+
+    // 컨텐츠 데이터 뿌려주기
     public void setDataContent(){
 
         // 제작자 메뉴 설정
@@ -243,7 +268,6 @@ public class showVideoContent extends AppCompatActivity {
 
     }
 
-
     // 비디오 설정
     public void setVideos(){
 
@@ -269,7 +293,6 @@ public class showVideoContent extends AppCompatActivity {
         });
 
     }
-
 
     // 삭제 버튼
     public void delete_data(){
@@ -439,6 +462,67 @@ public class showVideoContent extends AppCompatActivity {
     }
 
     //--------------------------------------- 버튼 이벤트 ----------------------------------------
+    // 추천 비추천 여부 판별
+    public void setRecoData(){
+        // 추천여부
+        if(uDC.reco.equals("0")){
+
+            ImageView recoBtn = (ImageView)findViewById(R.id.recoBtn);
+            recoBtn.setImageResource(R.drawable.recommend);
+
+            ImageView unrecoBtn = (ImageView)findViewById(R.id.unrecoBtn);
+            unrecoBtn.setImageResource(R.drawable.unrecommend);
+
+            // 미선택
+            setReco =false;
+            setUnreco = false;
+
+        }else if(uDC.reco.equals("1")){
+            // 추천상태
+            ImageView recoBtn = (ImageView)findViewById(R.id.recoBtn);
+            recoBtn.setImageResource(R.drawable.pre_reco);
+
+            ImageView unrecoBtn = (ImageView)findViewById(R.id.unrecoBtn);
+            unrecoBtn.setImageResource(R.drawable.unrecommend);
+
+            setReco = true;
+            setUnreco = false;
+
+        }else  if(uDC.reco.equals("2")){
+            // 추천상태
+            ImageView recoBtn = (ImageView)findViewById(R.id.recoBtn);
+            recoBtn.setImageResource(R.drawable.recommend);
+
+            ImageView unrecoBtn = (ImageView)findViewById(R.id.unrecoBtn);
+            unrecoBtn.setImageResource(R.drawable.pre_unreco);
+
+            setReco = false;
+            setUnreco = true;
+        }
+
+    }
+
+    // 즐겨찾기 여부 판별
+    public void setMylistData(){
+            // 즐겨찾기 여부
+        if(uDC.mylistVcontent.equals("0")){
+            ImageView mylist_Vcontent = (ImageView)findViewById(R.id.mylist_Vcontent);
+            mylist_Vcontent.setImageResource(R.drawable.my_list_add);
+
+            TextView mylist_text =(TextView)findViewById(R.id.mylist_text);
+            mylist_text.setText("즐겨찾기\n  추가");
+            setMyList = false;
+
+        }else if (uDC.mylistVcontent.equals("1")){
+            ImageView mylist_Vcontent = (ImageView)findViewById(R.id.mylist_Vcontent);
+            mylist_Vcontent.setImageResource(R.drawable.pre_mylist);
+
+            TextView mylist_text =(TextView)findViewById(R.id.mylist_text);
+            mylist_text.setText("즐겨찾기\n  해제");
+            setMyList = true;
+        }
+    }
+
    // 추천 비추천 이벤트
     public void recoBtnEvent(){
 
@@ -447,7 +531,24 @@ public class showVideoContent extends AppCompatActivity {
         recoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(loginUserId.equals("비로그인")){
+                    Toast.makeText(showVideoContent.this, "로그인 후 이용이 가능한 서비스 입니다.", Toast.LENGTH_SHORT).show();
+                }else{
+                    if (setReco == true){
+                        // 이미 추천인경우  추천 -1;
+                        // 여기에서 추천수와 비추천수를 조정 해야한다.
 
+                        setHttpReno(uDC.reco,"0");
+                        uDC.reco = "0";
+                        setRecoData();
+                    }else{
+                        // 비추천이거나  미추천상태인경우  비추천인경우 -1  추천 +1
+
+                        setHttpReno(uDC.reco,"1");
+                        uDC.reco = "1";
+                        setRecoData();
+                    }
+                }
             }
         });
 
@@ -458,7 +559,25 @@ public class showVideoContent extends AppCompatActivity {
         unrecoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(loginUserId.equals("비로그인")){
+                    Toast.makeText(showVideoContent.this, "로그인 후 이용이 가능한 서비스 입니다.", Toast.LENGTH_SHORT).show();
+                }else{
+                    if (setUnreco == true){
+                        // 이미 비추천 인경우
+                        // 비추천 -1
 
+                        setHttpReno(uDC.reco,"0");
+                        uDC.reco ="0";
+                        setRecoData();
+                    }else{
+                        // 추천이거나 미선택인 경우
+                        // 비추천 +1 추천 -1
+
+                        setHttpReno(uDC.reco,"2");
+                        uDC.reco = "2";
+                        setRecoData();
+                    }
+                }
             }
         });
 
@@ -472,12 +591,183 @@ public class showVideoContent extends AppCompatActivity {
         mylist_Vcontent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(loginUserId.equals("비로그인")){
+                    Toast.makeText(showVideoContent.this, "로그인 후 이용 가능한 서비스입니다", Toast.LENGTH_SHORT).show();
+                }else{
+                    if(setMyList == false){
+                        // 즐겨찾기 X -> 설정
+                        uDC.mylistVcontent ="1";
+                        setMyList = true;
+                        setMylistData();
+                        setHttpMylist();
+                    }else if (setMyList == true){
+                        // 즐겨찾기 O -> 해제
+                        uDC.mylistVcontent = "0";
+                        setMyList = false;
+                        setMylistData();
+                        setHttpMylist();
+                    }
+                }
 
             }
         });
     }
 
+    // (서버전송) 추천 비추천 서버에 전송
+    public void setHttpReno(String preState,String recentState){
+        class setRecoDatas extends AsyncTask<Void,Void,String>{
+            OkHttpClient client = new OkHttpClient();
+            ProgressDialog dialog = new ProgressDialog(showVideoContent.this);
 
+            String preState;
+            String recentState;
+
+            public setRecoDatas(String preState, String recentState) {
+                this.preState = preState;
+                this.recentState = recentState;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("데이터 수신중..");
+                dialog.setCanceledOnTouchOutside(false); // 바깥 터치 안되게
+                dialog.setCancelable(false); // 뒤로가기로 캔슬시키는거 안되게
+                dialog.show();
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+
+                String serverUrl = ipad+"/userData/changeUserRecoState.php";
+                String result = "";
+                try {
+                    // 보낼 데이터 담기
+                    RequestBody sendDatas = new FormBody.Builder()
+                            .add("loginUserId", loginUserId)
+                            .add("no",vc.dataNo)
+                            .add("pre_state",preState)
+                            .add("recent_State",recentState)
+                            .build();
+
+                    // 요청하면서  데이터 보내기
+                    Request request = new Request.Builder()
+                            .url(serverUrl)
+                            .post(sendDatas)
+                            .build();
+
+                    // 응답  (response.body().string() 는  1회만 사용이 가능하다 )
+                    Response response = client.newCall(request).execute();
+                    result = response.body().string();
+
+
+                }catch (Exception e){
+                }
+                // 가지고 온 데이터
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                try {
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                } catch (Exception e) {
+
+                }
+                Log.d("추천 비추천 결과",s);
+
+                String [] recoData = s.split("@@@");
+                vc.recommend=Integer.parseInt(recoData[0]);
+                vc.unrecommend = Integer.parseInt(recoData[1]);
+
+                // 추천수
+                TextView recoCount = (TextView)findViewById(R.id.recoCount);
+                recoCount.setText(String.valueOf(vc.recommend));
+
+                // 비추천수
+                TextView unrecoCount = (TextView)findViewById(R.id.unrecoCount);
+                unrecoCount.setText(String.valueOf(vc.unrecommend));
+
+
+
+
+            }
+        }
+
+        setRecoDatas gUD = new setRecoDatas(preState,recentState);
+        gUD.execute();
+
+    }
+
+    // (서버전송) 즐겨찾기 서버에 전송
+    public void setHttpMylist(){
+        class setMylistDatas extends AsyncTask<Void,Void,String>{
+            OkHttpClient client = new OkHttpClient();
+            ProgressDialog dialog = new ProgressDialog(showVideoContent.this);
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("데이터 수신중..");
+                dialog.setCanceledOnTouchOutside(false); // 바깥 터치 안되게
+                dialog.setCancelable(false); // 뒤로가기로 캔슬시키는거 안되게
+                dialog.show();
+            }
+
+            @Override
+            protected String doInBackground(Void... voids) {
+
+                String serverUrl = ipad+"/userData/setUserMylist.php";
+                String result = "";
+                try {
+                    // 보낼 데이터 담기
+                    RequestBody sendDatas = new FormBody.Builder()
+                            .add("loginUserId", loginUserId)
+                            .add("no",vc.dataNo)
+                            .add("state",uDC.mylistVcontent)
+                            .build();
+
+                    // 요청하면서  데이터 보내기
+                    Request request = new Request.Builder()
+                            .url(serverUrl)
+                            .post(sendDatas)
+                            .build();
+
+                    // 응답  (response.body().string() 는  1회만 사용이 가능하다 )
+                    Response response = client.newCall(request).execute();
+                    result = response.body().string();
+
+
+                }catch (Exception e){
+                }
+                // 가지고 온 데이터
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                try {
+                    if (dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                } catch (Exception e) {
+
+                }
+                Log.d("즐겨찾기 결과",s);
+            }
+        }
+
+        setMylistDatas gUD = new setMylistDatas();
+        gUD.execute();
+    }
+
+    //--------------------------------------- 댓글 이벤트 --------------------------------------
 
     //댓글 불러오기
     public void setRepleHttp(){
@@ -549,7 +839,7 @@ public class showVideoContent extends AppCompatActivity {
                     String[] data = a.split("//");
                     for (int i = 0; i < data.length; i++) {
                         String[] item = data[i].split(",");
-                        Log.e("qweqwer",item[i]);
+
                         if(item[i].equals("")){
 
                         }else {
