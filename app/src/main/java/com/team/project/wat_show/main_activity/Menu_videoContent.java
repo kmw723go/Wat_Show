@@ -259,7 +259,7 @@ public class Menu_videoContent extends Fragment {
                         video_content getDataContent = video_datas.get(position);
 
                         Intent gotoShowVContent = new Intent(getContext(),showVideoContent.class);
-                        gotoShowVContent.putExtra("showData",getDataContent);
+                        gotoShowVContent.putExtra("showDataNo",getDataContent.dataNo);
                         gotoShowVContent.putExtra("loginUserId",loginUserId);
                         startActivity(gotoShowVContent);
 

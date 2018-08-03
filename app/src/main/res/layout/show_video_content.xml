@@ -44,7 +44,7 @@
         </LinearLayout>
 
         <!-- 비디오 뷰-->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -56,9 +56,10 @@
                 android:id="@+id/video_view"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-               />
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
         <!-- 경계선 -->

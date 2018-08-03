@@ -219,10 +219,13 @@ public class upload_videos_List_adapter extends RecyclerView.Adapter<RecyclerVie
         ((mViewH)holder).content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 Intent showContent = new Intent(context,showVideoContent.class);
-                showContent.putExtra("showData", video_datas.get(position));
+                showContent.putExtra("showDataNo", video_datas.get(position).dataNo);
                 showContent.putExtra("loginUserId",loginUserId);
                 ((upload_videos_main)context).startActivityForResult(showContent,deleteRequast);
+
 
                 // 삭제 코드  ( main 에서  결과로  받을 때도 사용이 된다. )
 
