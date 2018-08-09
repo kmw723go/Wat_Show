@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,6 +17,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -42,7 +46,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class showVideoContent extends AppCompatActivity {
+public class showVideoContent extends AppCompatActivity{
 
     String contentNo;
     String loginUserId;
@@ -59,6 +63,8 @@ public class showVideoContent extends AppCompatActivity {
 
     // 동영상 관련
     MediaController mc;
+    VideoView video_view;
+
 
     //댓글 관련
     Video_reple_adapter vr_adapter;
@@ -91,6 +97,10 @@ public class showVideoContent extends AppCompatActivity {
 
         // 즐겨찾기 버튼 이벤트
         myListBtnEvent();
+
+        // 전체 화면 클릭 이벤트
+        setFullScreen();
+
     }
 
     // 사용자 데이터 받아오기
@@ -368,10 +378,8 @@ public class showVideoContent extends AppCompatActivity {
         // 미디어 컨트롤러
         mc = new MediaController(this);
 
-
         // 동영상
         setVideos();
-
 
         // 수정  삭제 버튼 이벤트
         delete_data();
@@ -385,33 +393,26 @@ public class showVideoContent extends AppCompatActivity {
         //비디오 사이즈 재설정을 필요로 함
         String url = ipad + "/Video_dir/" + vc.content_vPath;
 
-        VideoView video_view = (VideoView) findViewById(R.id.video_view);
+        video_view = (VideoView) findViewById(R.id.video_view);
         mc.setAnchorView(video_view);
+        mc.setBackgroundColor(Color.WHITE);
 
 
         video_view.setVideoURI(Uri.parse(url));
         video_view.requestFocus();
 
-        // 클릭이벤트
-        setVideoControll();
+
 
         video_view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 VideoView video_view = (VideoView) findViewById(R.id.video_view);
+                video_view.setMediaController(mc);
                 video_view.start();
             }
         });
 
-
-    }
-
-    // 비디오 일시정지
-    public void parseVideo() {
-        VideoView video_view = (VideoView) findViewById(R.id.video_view);
-        mc.setAnchorView(video_view);
-
-        video_view.stopPlayback();
+        fullScreenBtn(video_view,url);
 
     }
 
@@ -584,6 +585,19 @@ public class showVideoContent extends AppCompatActivity {
     }
 
     //--------------------------------------- 버튼 이벤트 ----------------------------------------
+
+    // 전체화면 이벤트
+    public void setFullScreen(){
+        /*ImageView full_ScreenBtn = (ImageView)findViewById(R.id.full_ScreenBtn);
+        full_ScreenBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+            }
+        });*/
+    }
+
     // 추천 비추천 여부 판별
     public void setRecoData() {
         // 추천여부
@@ -1188,6 +1202,9 @@ public class showVideoContent extends AppCompatActivity {
 
     }
 
+
+
+
     //리사이클러뷰 온클릭 리스너 클래스
     public static class RecyclerViewOnItemClickListener extends RecyclerView.SimpleOnItemTouchListener {
         private OnItemClickListener mListener;
@@ -1229,21 +1246,42 @@ public class showVideoContent extends AppCompatActivity {
     }
 
 
-    // 비디오 재생 일시정지 이벤트
-    public void setVideoControll() {
+    // ------------------- 비디오 전체 화면 버튼 -----------------------------------
 
-        VideoView video_view = (VideoView) findViewById(R.id.video_view);
-        video_view.setOnClickListener(new View.OnClickListener() {
+    public void fullScreenBtn(final VideoView video_view,final String url){
+        ImageView fullScreenBtn = (ImageView)findViewById(R.id.fullScreenBtn);
+        fullScreenBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                Intent videointent = new Intent(showVideoContent.this,
+                        fullScreenAct.class);
 
-                Log.d("보여지고 있니?", "" + mc.isShowing());
+                videointent.putExtra("currenttime",
+                        video_view.getCurrentPosition());
+                videointent.putExtra("Url", url);
+                startActivityForResult(videointent, 5555);
 
 
             }
         });
-
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 5555){
+            if(resultCode ==5555){
+                if (data.hasExtra("currenttime")) {
+                    int result = data.getExtras().getInt("currenttime", 0);
+                    if (result > 0) {
+                        if (null != video_view) {
+                            video_view.start();
+                            video_view.seekTo(result);
+                        }
+                    }
+                }
+
+            }
+        }
+    }
 }
